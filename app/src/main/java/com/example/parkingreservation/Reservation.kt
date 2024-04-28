@@ -1,5 +1,6 @@
 package com.example.parkingreservation
 
+import TimePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -20,9 +23,13 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +39,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -40,6 +48,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Reservation() {
     val isDatePickerVisible = remember { mutableStateOf(false) }
+    val isTimePickerVisible = remember { mutableStateOf(false) }
+    val timeState = rememberTimePickerState(0,0,is24Hour = false)
+    val nbrHours = remember { mutableIntStateOf(0) }
+
     val dateState = rememberDatePickerState()
     val millisToLocalDate = dateState.selectedDateMillis?.let {
         DateUtils().convertMillisToLocalDate(it)
@@ -100,11 +112,12 @@ fun Reservation() {
             colors = ButtonDefaults.buttonColors(containerColor = Color.White) ,
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.9f)
                 .padding(top = 15.dp),
             onClick = { isDatePickerVisible.value = true }
         ) {
-            Row (modifier = Modifier.padding(vertical = 5.dp)
+            Row (modifier = Modifier
+                .padding(vertical = 5.dp)
                 .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -137,20 +150,119 @@ fun Reservation() {
             }
         }
 
+        Row (modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .padding(top = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+
+        ){
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White) ,
+                shape = RoundedCornerShape(10.dp),
+                onClick = { isTimePickerVisible.value = true }
+            ) {
+                Column(modifier = Modifier.padding(bottom = 5.dp),) {
+                    Text(text = "Select Time",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black, // Change the opacity to 90%
+                    )
+                    Text(
+                        color = Color.Black.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(top = 5.dp),
+                        fontSize = 16.sp,
+                        text ="${timeState.hour}:${timeState.minute}"
+                    )
+                }
+
+            }
+
+            Column(modifier = Modifier.fillMaxWidth(0.9f)
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+                .padding(top = 10.dp)
+            ) {
+                Text(text = "Number of hours ",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black, // Change the opacity to 90%
+                )
+                Row (modifier = Modifier.fillMaxWidth(1f)
+                    .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(onClick = { nbrHours.value = nbrHours.value-1 },
+                        modifier = Modifier.width(50.dp)
+                            .height(35.dp),
+                        shape = RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 0.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 0.dp
+                            ),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF43939)) ,
+
+                        ) {
+                        Text(text = "-",
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+
+                            )
+                    }
+                    Text(text = nbrHours.value.toString(),
+                    )
+                    Button(onClick = { nbrHours.value = nbrHours.value+1 },
+                        modifier = Modifier.width(50.dp)
+                            .height(35.dp),
+                        shape = RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = 8.dp,
+                                bottomStart   = 0.dp,
+                                bottomEnd = 8.dp
+                            ),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF43939)) ,
+
+                        ) {
+                        Text(text = "+",
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+                
+
+
+
+        }
+
+
+
+
         if (isDatePickerVisible.value) {
             DatePickerDialog(
                 onDismissRequest = { isDatePickerVisible.value = false },
                 confirmButton = {
+
                     Button(
-                        onClick = { isDatePickerVisible.value = false }
-                    ) {
+                        onClick = { isDatePickerVisible.value = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF43939)) ,
+
+                        ) {
                         Text(text = "OK")
                     }
                 },
                 dismissButton = {
                     Button(
-                        onClick = { isDatePickerVisible.value = false }
-                    ) {
+                        onClick = { isDatePickerVisible.value = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF43939)) ,
+
+                        ) {
                         Text(text = "Cancel")
                     }
                 }
@@ -161,6 +273,16 @@ fun Reservation() {
                 )
             }
         }
+        if(isTimePickerVisible.value) {
+
+            TimePickerDialog(
+            onCancel = { isTimePickerVisible.value = false },
+            onConfirm = { isTimePickerVisible.value = false })
+            {
+                TimePicker(state = timeState)
+            }
+        }
+
 
 
 
