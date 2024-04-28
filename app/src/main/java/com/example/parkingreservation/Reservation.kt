@@ -51,6 +51,7 @@ fun Reservation() {
     val isTimePickerVisible = remember { mutableStateOf(false) }
     val timeState = rememberTimePickerState(0,0,is24Hour = false)
     val nbrHours = remember { mutableIntStateOf(0) }
+    val hourPrice = 13.99
 
     val dateState = rememberDatePickerState()
     val millisToLocalDate = dateState.selectedDateMillis?.let {
@@ -92,7 +93,7 @@ fun Reservation() {
                     .background(color = Color(0xFFFFF3F3),shape = RoundedCornerShape(16.dp))
             ) {
                 Text(
-                    text = "$14/h",
+                    text = "$${hourPrice}/h",
                     color = Color(0xFFF43939),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold, // Change the font weight to bold
@@ -178,7 +179,8 @@ fun Reservation() {
 
             }
 
-            Column(modifier = Modifier.fillMaxWidth(0.9f)
+            Column(modifier = Modifier
+                .fillMaxWidth(0.9f)
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(top = 10.dp)
             ) {
@@ -189,13 +191,15 @@ fun Reservation() {
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black, // Change the opacity to 90%
                 )
-                Row (modifier = Modifier.fillMaxWidth(1f)
+                Row (modifier = Modifier
+                    .fillMaxWidth(1f)
                     .padding(top = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(onClick = { nbrHours.value = nbrHours.value-1 },
-                        modifier = Modifier.width(50.dp)
+                        modifier = Modifier
+                            .width(50.dp)
                             .height(35.dp),
                         shape = RoundedCornerShape(
                                 topStart = 8.dp,
@@ -216,7 +220,8 @@ fun Reservation() {
                     Text(text = nbrHours.value.toString(),
                     )
                     Button(onClick = { nbrHours.value = nbrHours.value+1 },
-                        modifier = Modifier.width(50.dp)
+                        modifier = Modifier
+                            .width(50.dp)
                             .height(35.dp),
                         shape = RoundedCornerShape(
                                 topStart = 0.dp,
@@ -235,10 +240,36 @@ fun Reservation() {
                     }
                 }
             }
-                
+        }
+        Row (modifier = Modifier.fillMaxWidth(0.8f)
+            .padding(top = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(text = "Total Price : ",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Text(text = "${nbrHours.value * hourPrice} $",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFF43939)
 
+            )
 
-
+        }
+        Button(onClick = { /*TODO*/ },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black) ,
+            modifier = Modifier.padding(horizontal = 10.dp)
+                .padding(top = 25.dp)
+                .fillMaxWidth(0.9f),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(text = "Next",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
 
