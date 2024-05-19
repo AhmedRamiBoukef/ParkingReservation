@@ -2,10 +2,12 @@ package com.example.parkingreservation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,11 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 
 @Composable
-fun LandingPage() {
-    Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.background(
+fun LandingPage(navController: NavHostController) {
+    Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxSize().background(
         Color(0xFFEAEAF3)
     )){
         Image(
@@ -48,7 +51,7 @@ fun LandingPage() {
             modifier = Modifier
                 .padding(horizontal = 50.dp, vertical = 10.dp)
                 .fillMaxWidth(1.0f),
-            onClick = { /*TODO*/ }) {
+            onClick = { navController.navigate(Destination.Login.route) }) {
             Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 Image(
                     painter = painterResource(id = R.drawable.message),
@@ -84,8 +87,10 @@ fun LandingPage() {
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-            Text(text = "Don't have an account?", fontSize = 12.sp, color = Color(0xFF2D2D2D))
-            Text(text = "  Sign Up", fontSize = 12.sp, color = Color(0xFFF43939))
+            Text(text = "Don't have an account?  ", fontSize = 12.sp, color = Color(0xFF2D2D2D))
+            Text(text = "Sign Up", fontSize = 12.sp, color = Color(0xFFF43939), modifier = Modifier.clickable {
+                navController.navigate(Destination.Signup.route)
+            })
         }
         Spacer(modifier = Modifier.height(100.dp))
     }

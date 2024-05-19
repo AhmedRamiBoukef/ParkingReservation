@@ -1,6 +1,8 @@
 package com.example.parkingreservation.screens
 
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,10 +37,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
+import com.example.parkingreservation.viewmodel.LoginModel
 
 @Composable
-fun Login () {
+fun Login(navController: NavHostController, loginModel: LoginModel, applicationContext: Context) {
     var email = remember { mutableStateOf(TextFieldValue("")) }
     var password = remember { mutableStateOf(TextFieldValue("")) }
     var passwordVisibility = remember { mutableStateOf(false) }
@@ -103,7 +107,18 @@ fun Login () {
                     modifier = Modifier
                         .padding(horizontal = 30.dp, vertical = 10.dp)
                         .fillMaxWidth(1.0f),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        loginModel.login(
+                            email.value.text,
+                            password.value.text
+                        )
+                        if (loginModel.success.value) {
+                            Toast.makeText(applicationContext,"Succes", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Destination.Login.route)
+                        } else {
+                            Toast.makeText(applicationContext,"Error", Toast.LENGTH_SHORT).show()
+                        }
+                    }) {
                     Text(
                         text = "Login",
                         color = Color.White,
