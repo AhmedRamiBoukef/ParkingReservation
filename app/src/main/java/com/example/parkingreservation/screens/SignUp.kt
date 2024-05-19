@@ -1,7 +1,10 @@
 package com.example.parkingreservation.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +37,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
+import com.example.parkingreservation.viewmodel.SignupModel
 
 @Composable
-fun SignUp () {
+fun SignUp(navController: NavHostController, signupModel: SignupModel, applicationContext: Context) {
+    var fullname = remember { mutableStateOf(TextFieldValue("")) }
+    var address = remember { mutableStateOf(TextFieldValue("")) }
+    var phonenumber = remember { mutableStateOf(TextFieldValue("")) }
     var email = remember { mutableStateOf(TextFieldValue("")) }
     var password = remember { mutableStateOf(TextFieldValue("")) }
     var passwordVisibility = remember { mutableStateOf(false) }
@@ -51,7 +59,7 @@ fun SignUp () {
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.matchParentSize()
             )
-            Text(text = "Glad to see you!!",
+            Text(text = "Let's start!!",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -65,6 +73,23 @@ fun SignUp () {
                 color = Color(0xFFF4F4FA)
             )) {
             Column(modifier = Modifier.padding(horizontal = 30.dp, vertical = 30.dp)) {
+                OutlinedTextField(
+                    shape = RoundedCornerShape(15.dp),
+                    value = fullname.value,
+                    onValueChange = { fullname.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(text = "Full Name", color = Color(0x9E2D2D2D)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    textStyle = TextStyle(color = Color(0x9E2D2D2D)),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = Color.Black,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent
+                    )
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
                     shape = RoundedCornerShape(15.dp),
                     value = email.value,
@@ -98,9 +123,42 @@ fun SignUp () {
                         unfocusedBorderColor = Color.Transparent
                     ),
                     visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-
-
                     )
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    shape = RoundedCornerShape(15.dp),
+                    value = address.value,
+                    onValueChange = { address.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(text = "Address", color = Color(0x9E2D2D2D)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    textStyle = TextStyle(color = Color(0x9E2D2D2D)),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = Color.Black,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent
+                    )
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    shape = RoundedCornerShape(15.dp),
+                    value = phonenumber.value,
+                    onValueChange = { phonenumber.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(text = "Phone Number", color = Color(0x9E2D2D2D)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    textStyle = TextStyle(color = Color(0x9E2D2D2D)),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = Color.Black,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent
+                    )
+                )
+
             }
             Column (modifier = Modifier.padding(bottom = 40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
@@ -109,9 +167,24 @@ fun SignUp () {
                     modifier = Modifier
                         .padding(horizontal = 30.dp, vertical = 10.dp)
                         .fillMaxWidth(1.0f),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        signupModel.signup(
+                            fullname.value.text,
+                            email.value.text,
+                            password.value.text,
+                            address.value.text,
+                            phonenumber.value.text
+                        )
+                        if (signupModel.success.value) {
+                            Toast.makeText(applicationContext,"Succes", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Destination.Login.route)
+                        } else {
+                            Toast.makeText(applicationContext,"Error", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }) {
                     Text(
-                        text = "Login",
+                        text = "Sign up",
                         color = Color.White,
                         modifier = Modifier
                             .padding(vertical = 6.dp)
@@ -120,8 +193,10 @@ fun SignUp () {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    Text(text = "Don't have an account?", fontSize = 12.sp, color = Color(0xFF2D2D2D))
-                    Text(text = "  Sign Up", fontSize = 12.sp, color = Color(0xFFF43939))
+                    Text(text = "have you an account?", fontSize = 12.sp, color = Color(0xFF2D2D2D))
+                    Text(text = "  Login", fontSize = 12.sp, color = Color(0xFFF43939), modifier = Modifier.clickable {
+                        navController.navigate(Destination.Login.route)
+                    })
                 }
             }
         }
