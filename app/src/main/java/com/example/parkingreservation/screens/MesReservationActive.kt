@@ -1,4 +1,4 @@
-package com.example.parkingreservation
+package com.example.parkingreservation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.parkingreservation.Components.ReservationElement
 
 @Composable
 fun MesReservationActive() // we have active , finished  , expired , canceled

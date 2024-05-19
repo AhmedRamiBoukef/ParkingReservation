@@ -1,4 +1,4 @@
-package com.example.parkingreservation
+package com.example.parkingreservation.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.parkingreservation.Components.ReservationElement
 
 
 @Composable

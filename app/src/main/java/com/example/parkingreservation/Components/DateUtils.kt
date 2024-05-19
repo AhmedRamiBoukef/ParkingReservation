@@ -1,4 +1,4 @@
-package com.example.parkingreservation
+package com.example.parkingreservation.Components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
