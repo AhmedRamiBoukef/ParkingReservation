@@ -23,8 +23,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                    // the new screen
-                    //Reservation()
-                    MyHistory()
+                    Reservation()
+                    //MyHistory()
                 }
             }
         }

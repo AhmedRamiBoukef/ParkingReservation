@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -23,6 +25,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -32,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +56,7 @@ fun Reservation() {
     val timeState = rememberTimePickerState(0,0,is24Hour = false)
     val nbrHours = remember { mutableIntStateOf(0) }
     val hourPrice = 13.99
+    var showDialog by remember { mutableStateOf(false) }
 
     val dateState = rememberDatePickerState()
     val millisToLocalDate = dateState.selectedDateMillis?.let {
@@ -70,6 +75,9 @@ fun Reservation() {
         Image(
             painter = painter,
             contentDescription = "reservation image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(175.dp)
             // Other modifiers like contentScale, alignment, etc. can be added here
         )
         Row (
@@ -143,7 +151,13 @@ fun Reservation() {
                     Image(
                         painter = painter,
                         contentDescription = "calendar image",
-                        modifier = Modifier.padding(vertical = 8.dp , horizontal = 12.dp) // Add padding inside the border
+
+                        modifier = Modifier
+                            .padding(
+                                vertical = 8.dp,
+                                horizontal = 12.dp
+                            ) // Add padding inside the border
+                            .size(20.dp)
 
                         // Other modifiers like contentScale, alignment, etc. can be added here
                     )
@@ -197,7 +211,12 @@ fun Reservation() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(onClick = { nbrHours.value = nbrHours.value-1 },
+                    Button(onClick = {
+                        if(nbrHours.value>0)
+                        {
+                            nbrHours.value = nbrHours.value-1
+                        }
+                         },
                         modifier = Modifier
                             .width(50.dp)
                             .height(35.dp),
@@ -241,7 +260,8 @@ fun Reservation() {
                 }
             }
         }
-        Row (modifier = Modifier.fillMaxWidth(0.8f)
+        Row (modifier = Modifier
+            .fillMaxWidth(0.8f)
             .padding(top = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -259,9 +279,10 @@ fun Reservation() {
             )
 
         }
-        Button(onClick = { /*TODO*/ },
+        Button( onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black) ,
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
                 .padding(top = 25.dp)
                 .fillMaxWidth(0.9f),
             shape = RoundedCornerShape(8.dp)
@@ -269,6 +290,95 @@ fun Reservation() {
             Text(text = "Next",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
+            )
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showDialog = false
+                },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black) ,
+                        modifier = Modifier
+                            .fillMaxWidth(0.45f),
+                        shape = RoundedCornerShape(8.dp)
+                        ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black) ,
+                        modifier = Modifier
+                            .fillMaxWidth(0.45f),
+                        shape = RoundedCornerShape(8.dp)
+                        ) {
+                        Text("Cancel")
+                    }
+                },
+                title = {
+                    Text(text = "Confirm Your Reservation")
+                },
+                text = {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                                .padding(top = 10.dp)
+                                .fillMaxWidth(),
+                            text = "${dateToString } ${timeState.hour}:${timeState.minute}-${timeState.hour+nbrHours.value}:${timeState.minute} ",
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Column(
+                            modifier = Modifier.padding(top = 10.dp),
+                            horizontalAlignment = Alignment.Start) {
+                            Text(text = "Name Park", fontSize = 18.sp , fontWeight = FontWeight.Bold , color = Color.Black)
+                            Text(text = "53 Strret ouedsmar alger",
+                                color = Color(0x4B2D2D2D), // Hexadecimal color value (e.g., #3366FF)
+                            )
+                            Row (modifier = Modifier.fillMaxWidth()
+                                .padding(top = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start){
+                                Text(text = "Place :  ",
+                                    fontSize = 18.sp,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(text = "A-6",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFF43939)
+                                )
+                            }
+                            Row (modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ){
+                                Text(text = "Total Price : ",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(text = "${nbrHours.value * hourPrice} $",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFF43939)
+
+                                )
+
+                            }
+
+                        }
+
+
+
+                    }
+                }
             )
         }
 
