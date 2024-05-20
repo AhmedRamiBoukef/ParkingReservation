@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.example.parkingreservation.R
 
 @Composable
-fun ParkingDetailsScreen(){
+fun ParkingDetailsScreen(parkingId: Int?){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -149,13 +149,13 @@ fun ParkingDetailsScreen(){
             fontSize = 25.sp
         )
         Text(
-            text = "24/7 parking facility with cctv camera, professional security guard, chair disble, floor parking list facilities. You will get hassle parking facilities with 35% discount on first parking...",
+            text = "24/7 parking facility with cctv camera, professional security guard, chair disble, floor parking list facilities.",
             color = Color(0xFF2D2D2D).copy(alpha = 0.6f)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(Color.Transparent),
-            modifier = Modifier.background(color = Color(0XFF130F26), shape = RoundedCornerShape(10.dp))
+            colors = ButtonDefaults.buttonColors(Color(0XFF130F26)),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Text(text = "Book Now")
 

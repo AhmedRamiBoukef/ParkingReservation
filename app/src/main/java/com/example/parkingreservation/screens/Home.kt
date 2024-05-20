@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,11 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
+import com.example.parkingreservation.data.entities.Parking
 
 
 @Composable
-fun Home() {
+fun Home(navController: NavHostController) {
+    val parkings = remember { getDummyParkings() }
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color(0XFF081024))
@@ -47,11 +51,67 @@ fun Home() {
                 HeaderSection()
             }
             item {
-                ParkingSpacesSection()
+                ParkingSpacesSection(navController,parkings)
             }
         }
     }
 }
+
+fun getDummyParkings(): List<Parking> {
+    return listOf(
+        Parking(
+            id = 1,
+            photo = "url_de_la_photo_1",
+            nom = "Parking 1",
+            address = "Adresse 1",
+            description = "Description du parking 1",
+            nbrTotalPlaces = 50,
+            nbrDisponiblePlaces = 20,
+            places = "Emplacements du parking 1"
+        ),
+        Parking(
+            id = 2,
+            photo = "url_de_la_photo_2",
+            nom = "Parking 2",
+            address = "Adresse 2",
+            description = "Description du parking 2",
+            nbrTotalPlaces = 70,
+            nbrDisponiblePlaces = 30,
+            places = "Emplacements du parking 2"
+        ),
+        Parking(
+            id = 3,
+            photo = "url_de_la_photo_3",
+            nom = "Parking 3",
+            address = "Adresse 3",
+            description = "Description du parking 3",
+            nbrTotalPlaces = 80,
+            nbrDisponiblePlaces = 40,
+            places = "Emplacements du parking 3"
+        ),
+        Parking(
+            id = 4,
+            photo = "url_de_la_photo_4",
+            nom = "Parking 4",
+            address = "Adresse 4",
+            description = "Description du parking 4",
+            nbrTotalPlaces = 60,
+            nbrDisponiblePlaces = 25,
+            places = "Emplacements du parking 4"
+        ),
+        Parking(
+            id = 5,
+            photo = "url_de_la_photo_5",
+            nom = "Parking 5",
+            address = "Adresse 5",
+            description = "Description du parking 5",
+            nbrTotalPlaces = 90,
+            nbrDisponiblePlaces = 50,
+            places = "Emplacements du parking 5"
+        )
+    )
+}
+
 
 @Composable
 fun HeaderSection() {
@@ -145,7 +205,7 @@ fun HeaderSection() {
 }
 
 @Composable
-fun ParkingSpacesSection() {
+fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parking>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,22 +222,24 @@ fun ParkingSpacesSection() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 8.dp)
         )
-        repeat(5) {
-            ParkingItem()
+        parkings.take(5).forEach { parking ->
+            ParkingItem(parking, navController)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun ParkingItem() {
+fun ParkingItem(parking: Parking, navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
             .padding(16.dp)
+            .clickable { navController.navigate(Destination.ParkingDetails.createRoute(parking.id)) }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
+
             Image(
                 painter = painterResource(id = R.drawable.parking_image),
                 contentDescription = "Parking Icon",
@@ -188,14 +250,14 @@ fun ParkingItem() {
                 Row {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Graha Mall",
+                        text = parking.nom, // Utilisation du nom du parking
                         color = Color(0xFF2D2D2D),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "7 min",
+                        text = "7 min", // Utilisation des données du parking
                         color = Color(0xFFF43939).copy(alpha = 0.8f),
                         modifier = Modifier
                             .background(
@@ -208,13 +270,13 @@ fun ParkingItem() {
 
                 }
                 Text(
-                    text = "123 Dhaka Street",
+                    text = parking.address, // Utilisation de l'adresse du parking
                     color = Color(0xFF2D2D2D)
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 Row {
                     Text(
-                        text = "$7",
+                        text = "$7", // Utilisation des données du parking
                         color = Color(0xFFF43939),
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
