@@ -8,11 +8,15 @@ data class SignupRequest(
     val address:String
 )
 
-data class SignupResponse(val success: Boolean)
+data class SignupResponse(
+    val token: String
+)
 
 data class LoginRequest(
     val email:String,
     val password:String
 )
 
-data class LoginResponse(val success: Boolean)
+data class LoginResponse(
+    val token: String
+)
