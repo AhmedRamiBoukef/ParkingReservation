@@ -1,7 +1,11 @@
 package com.example.parkingreservation.screens
 
+import android.content.Context
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import com.example.parkingreservation.Components.TimePickerDialog
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,13 +47,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.DateUtils
 import com.example.parkingreservation.R
+import com.example.parkingreservation.viewmodel.LoginModel
+import com.example.parkingreservation.viewmodel.ReservationModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Reservation() {
+fun Reservation(navController: NavHostController ,reservationModel: ReservationModel ,applicationContext: Context) {
     val isDatePickerVisible = remember { mutableStateOf(false) }
     val isTimePickerVisible = remember { mutableStateOf(false) }
     val timeState = rememberTimePickerState(0,0,is24Hour = false)
@@ -61,7 +69,8 @@ fun Reservation() {
         DateUtils().convertMillisToLocalDate(it)
     }
     val dateToString = millisToLocalDate?.let {
-        DateUtils().dateToString(millisToLocalDate)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        it.format(formatter)
     } ?: ""
     Column (modifier = Modifier
         .fillMaxSize()
@@ -297,7 +306,20 @@ fun Reservation() {
                     showDialog = false
                 },
                 confirmButton = {
-                    TextButton(onClick = { showDialog = false },
+                    TextButton(onClick = { showDialog = false
+                                            val response = reservationModel.createReservation(
+                                                 7,
+                                                nbrHours.value,
+                                                "${dateToString}T${String.format("%02d", timeState.hour)}:${String.format("%02d", timeState.minute)}"
+                                            )
+                                            if (reservationModel.success.value) {
+                                                Toast.makeText(applicationContext,"Succes", Toast.LENGTH_SHORT).show()
+                                                navController.navigate(Destination.ReservationDetails.route)
+                                            } else {
+
+                                                Toast.makeText(applicationContext,"Error in creating reservation", Toast.LENGTH_SHORT).show()
+                                            }
+                                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Black) ,
                         modifier = Modifier
                             .fillMaxWidth(0.45f),
@@ -326,7 +348,7 @@ fun Reservation() {
                             modifier = Modifier
                                 .padding(top = 10.dp)
                                 .fillMaxWidth(),
-                            text = "${dateToString } ${timeState.hour}:${timeState.minute}-${timeState.hour+nbrHours.value}:${timeState.minute} ",
+                            text = "${dateToString}T${String.format("%02d", timeState.hour)}:${String.format("%02d", timeState.minute)}-${timeState.hour+nbrHours.value}:${timeState.minute} ",
                             fontWeight = FontWeight.SemiBold
                         )
                         Column(
@@ -408,8 +430,10 @@ fun Reservation() {
             ) {
                 DatePicker(
                     state = dateState,
-                    showModeToggle = true
-                )
+                    showModeToggle = true,
+                    dateFormatter = DatePickerFormatter(
+                        selectedDateSkeleton = "yyyy-MM-dd"
+                    ),                )
             }
         }
         if(isTimePickerVisible.value) {
