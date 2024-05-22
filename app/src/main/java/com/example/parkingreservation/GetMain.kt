@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.parkingreservation.screens.Home
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
+import com.example.parkingreservation.screens.Profile
 import com.example.parkingreservation.screens.SignUp
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.SignupModel
@@ -28,5 +29,6 @@ fun GetMain(
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
         composable(Destination.Home.route) { Home(navController) }
+        composable(Destination.Profile.route) { Profile() }
     }
 }
