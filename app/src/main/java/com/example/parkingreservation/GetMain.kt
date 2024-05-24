@@ -29,7 +29,7 @@ fun GetMain(
         composable(Destination.Home.route) { Home(navController = navController)}
         composable(Destination.ParkingDetails.route) { backStackEntry ->
             val parkingId = backStackEntry.arguments?.getInt("parkingId")
-            ParkingDetailsScreen(parkingId)
+            ParkingDetailsScreen(parkingId, navController = navController)
         }
     }
 }

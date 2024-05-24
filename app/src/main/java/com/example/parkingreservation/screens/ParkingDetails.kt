@@ -2,6 +2,7 @@ package com.example.parkingreservation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 
 @Composable
-fun ParkingDetailsScreen(parkingId: Int?){
+fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -42,23 +44,19 @@ fun ParkingDetailsScreen(parkingId: Int?){
             .padding(vertical = 40.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-
-                ) {
-                Text(
-                    text = "<",
-                    fontSize = 30.sp,
-                    color = Color(0XFF2D2D2D).copy(alpha = 0.5f),
-                    modifier = Modifier
-                        .background(Color(0XFFEAEAF3), shape = RoundedCornerShape(5.dp))
-                        .size(40.dp)
-                        .padding(start = 12.dp)
+            Text(
+                text = "<",
+                fontSize = 30.sp,
+                color = Color(0XFF2D2D2D).copy(alpha = 0.5f),
+                modifier = Modifier
+                    .background(Color(0XFFEAEAF3), shape = RoundedCornerShape(5.dp))
+                    .padding(horizontal = 10.dp, vertical = 1.dp)
+                    .clickable { (navController.navigate(Destination.Home.route)) },
 
 
 
-                )
-            }
+
+            )
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -68,10 +66,11 @@ fun ParkingDetailsScreen(parkingId: Int?){
                     color = Color(0XFF2D2D2D),
                     modifier = Modifier.padding(top = 10.dp)
                 )
-                Spacer(modifier = Modifier.width(80.dp))
+                Spacer(modifier = Modifier.width(30.dp))
             }
 
         }
+        Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
