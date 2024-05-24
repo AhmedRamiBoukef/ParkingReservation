@@ -16,7 +16,7 @@ import retrofit2.http.POST
 
 interface CreateReservation {
 
-    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjQsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTU0MTk5ODAsImV4cCI6MTcxODAxMTk4MH0.P4xAL6D9ALA7IGruystSoQCYW4U3IIv60nUYbx1DHcI", "Content-Type: application/json")
+    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTE1ODksImV4cCI6MTcxOTEwMzU4OX0.m111eb3QnTny8BR_q5qlwHHhmk9h6BGzM3aPoisYOv8", "Content-Type: application/json")
 
     @POST("api/reservation/")
     suspend fun createReservation(
