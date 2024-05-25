@@ -35,7 +35,7 @@ fun MesReservationActive(
 
     LaunchedEffect(Unit) {
         try {
-            val reponse = getReservationsModel.getActiveReservations()
+            val reponse = getReservationsModel.getReservations("expire")
             if (getReservationsModel.successActive.value) {
                 Log.d("Active Reservations", "MesReservationActive: ${getReservationsModel.activereservation.value}")
             } else {

@@ -28,14 +28,14 @@ fun GetMain(
     getReservationsModel: GetReservationsModel,
     applicationContext: Context
 ) {
-    NavHost(navController = navController, startDestination = Destination.MyActiveReservation.route ) {
+    NavHost(navController = navController, startDestination = Destination.ReservationHistory.route ) {
 
         composable(Destination.Landing.route) { LandingPage(navController) }
         composable(Destination.Login.route) { Login(navController,loginModel,applicationContext) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,applicationContext)}
         composable(Destination.Reservation.route) { Reservation(navController,reservationModel,applicationContext, parkingId = 7)}
         composable(Destination.MyActiveReservation.route){ MesReservationActive(navController,getReservationsModel,applicationContext)}
-        composable(Destination.ReservationHistory.route){ MyHistory()}
+        composable(Destination.ReservationHistory.route){ MyHistory(navController,getReservationsModel,applicationContext)}
         composable(Destination.ReservationDetails.route) { ReservationDetails()}
 
 

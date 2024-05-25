@@ -64,15 +64,19 @@ fun ReservationElement(reservation: GetReservationResponse, navController: NavHo
             ){
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .background(color = Color.Green,shape = RoundedCornerShape(16.dp))
+                        .fillMaxWidth(0.6f)
+                        .background(color = when (reservation.status) {
+                            "expired", "canceled" -> Color.Red
+                            "finished" -> Color.Blue
+                            else -> Color.Green // Change this to the default color if needed
+                        },shape = RoundedCornerShape(16.dp))
                         .padding(horizontal = 4.dp),
                 ) {
                     Row (horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.padding(2.dp)){
                         Text(
                             text = "${reservation.status}",
-                            color = Color.Black,
+                            color = Color.White,
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold, // Change the font weight to bold

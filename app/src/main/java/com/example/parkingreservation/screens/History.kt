@@ -1,5 +1,8 @@
 package com.example.parkingreservation.screens
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.ReservationElement
+import com.example.parkingreservation.viewmodel.GetReservationsModel
 
 
 @Composable
@@ -84,47 +91,96 @@ fun InactiveStatus(status: String, onClick: () -> Unit) {
 
 
 @Composable
-fun MyHistory() // we have active , finished  , expired , canceled
+fun MyHistory(
+    navController: NavHostController,
+    getReservationsModel: GetReservationsModel,
+    applicationContext: Context
+) // we have active , finished  , expired , canceled
 {
     val textList = List(15) { index -> "Text${index + 1}" }
     var activeStatus by remember { mutableStateOf("Active") }
     val statuses = listOf("Active", "Expired", "Finished", "Cancelled")
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 30.dp)
-        .background(Color(0xFFF4F4FA)),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "My Reservations History",
-            modifier = Modifier.padding(top = 10.dp),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(25.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+
+    LaunchedEffect(activeStatus) {
+        try {
+                when (activeStatus) {
+                    "Active" -> getReservationsModel.getReservations("active")
+                    "Expired" -> getReservationsModel.getReservations("expire")
+                    "Finished" -> getReservationsModel.getReservations("finish")
+                    "Cancelled" -> getReservationsModel.getReservations("cancel")
+                }
+            if (getReservationsModel.successActive.value) {
+                Log.d("Active Reservations", "MesReservationActive: ${getReservationsModel.activereservation.value}")
+            } else {
+                Toast.makeText(applicationContext, "Error in loading Page", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(applicationContext, "An error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+        Column(
             modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth()
-
-
+                .fillMaxSize()
+                .padding(top = 30.dp)
+                .background(Color(0xFFF4F4FA)),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            statuses.forEach { status ->
-                if (status == activeStatus) {
-                    ActiveStatus(status) { activeStatus = status }
+            Text(
+                text = "My Reservations History",
+                modifier = Modifier.padding(top = 10.dp),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxWidth()
+
+
+            ) {
+                statuses.forEach { status ->
+                    if (status == activeStatus) {
+                        ActiveStatus(status) { activeStatus = status }
+                    } else {
+                        InactiveStatus(status) { activeStatus = status  }
+                    }
+                }
+            }
+            if (getReservationsModel.loadingActive.value) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFF4F4FA)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFFF43939))
+                }
+            }else {
+                if (getReservationsModel.activereservation.value != null) {
+                    LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                        items(getReservationsModel.activereservation.value!!) { reservation ->
+                            reservation?.let {
+                                ReservationElement(reservation = it, navController = navController)
+                            }
+                        }
+                    }
                 } else {
-                    InactiveStatus(status) { activeStatus = status }
+                    Text(text = "No active reservations available.")
+                }
+                if (getReservationsModel.activereservation.value?.isEmpty() == true) {
+                    Text(
+                        modifier = Modifier.padding(top = 200.dp),
+                        text = "No ${activeStatus} Reservation"
+                    )
                 }
             }
         }
-        /*LazyColumn(modifier = Modifier.padding(top = 10.dp)){
-            items(textList) { text ->
-                ReservationElement()
-            }
-        }*/
-    }
+
 
 }

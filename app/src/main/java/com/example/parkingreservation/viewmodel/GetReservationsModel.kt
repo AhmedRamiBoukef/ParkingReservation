@@ -13,11 +13,11 @@ class GetReservationsModel (private val getReservationRepository: GetReservation
     var loadingActive = mutableStateOf(false)
     var successActive = mutableStateOf(false)
     var activereservation = mutableStateOf<List<GetReservationResponse>?>(null)
-    suspend fun getActiveReservations(): List<GetReservationResponse?>? {
+    suspend fun getReservations(status : String): List<GetReservationResponse?>? {
         loadingActive.value = true
         return try {
             val response = withContext(Dispatchers.IO) {
-                getReservationRepository.getActiveReservations()
+                getReservationRepository.getActiveReservations(status = status)
             }
             Log.d("get Park Model ", "createReservation: ${response.body()}")
 
