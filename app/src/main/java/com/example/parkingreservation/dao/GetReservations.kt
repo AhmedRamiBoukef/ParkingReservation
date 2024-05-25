@@ -16,6 +16,15 @@ interface GetReservations {
         "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0",
         "Content-Type: application/json"
     )
+    @GET("api/reservation/{id}")
+    suspend fun getReservationById(@Path("id") id: Int): Response<GetReservationResponse>
+
+
+
+    @Headers(
+        "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0",
+        "Content-Type: application/json"
+    )
     @GET("api/reservation/{status}")
     suspend fun getActiveReservations(@Path("status") status: String): Response<List<GetReservationResponse>>
 

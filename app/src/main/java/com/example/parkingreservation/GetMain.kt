@@ -36,7 +36,7 @@ fun GetMain(
         composable(Destination.Reservation.route) { Reservation(navController,reservationModel,applicationContext, parkingId = 7)}
         composable(Destination.MyActiveReservation.route){ MesReservationActive(navController,getReservationsModel,applicationContext)}
         composable(Destination.ReservationHistory.route){ MyHistory(navController,getReservationsModel,applicationContext)}
-        composable(Destination.ReservationDetails.route) { ReservationDetails()}
+        composable(Destination.ReservationDetails.route) { ReservationDetails(navController,getReservationsModel,applicationContext,reservationId = 28 )}
 
 
     }
