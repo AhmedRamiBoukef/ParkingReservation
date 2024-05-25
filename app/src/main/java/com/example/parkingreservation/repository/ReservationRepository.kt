@@ -8,4 +8,6 @@ class ReservationRepository(private val createReservation: CreateReservation) {
         createReservation.createReservation(
             ReservationRequest(parkingId = parkingId, nbrHours = nbrHours, dateAndTimeDebut = dateAndTimeDebut)
         )
+    suspend fun getParkingInfo(parkingId: Int) =
+        createReservation.getParkingInfo(parkingId)
 }

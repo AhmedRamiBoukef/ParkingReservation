@@ -31,7 +31,7 @@ fun GetMain(
         composable(Destination.Landing.route) { LandingPage(navController) }
         composable(Destination.Login.route) { Login(navController,loginModel,applicationContext) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,applicationContext)}
-        composable(Destination.Reservation.route) { Reservation(navController,reservationModel,applicationContext)}
+        composable(Destination.Reservation.route) { Reservation(navController,reservationModel,applicationContext, parkingId = 7)}
         composable(Destination.MyActiveReservation.route){ MesReservationActive()}
         composable(Destination.ReservationHistory.route){ MyHistory()}
         composable(Destination.ReservationDetails.route) { ReservationDetails()}
