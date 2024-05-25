@@ -120,11 +120,11 @@ fun MyHistory() // we have active , finished  , expired , canceled
                 }
             }
         }
-        LazyColumn(modifier = Modifier.padding(top = 10.dp)){
+        /*LazyColumn(modifier = Modifier.padding(top = 10.dp)){
             items(textList) { text ->
                 ReservationElement()
             }
-        }
+        }*/
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.parkingreservation.Components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,16 +26,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
+import com.example.parkingreservation.data.entities.GetReservationResponse
+import com.example.parkingreservation.screens.Destination
 
 @Composable
-fun ReservationElement()
+fun ReservationElement(reservation: GetReservationResponse, navController: NavHostController)
 {
     Row (modifier = Modifier
         .padding(top=25.dp)
         .fillMaxWidth(0.9f)
         .background(Color.White, shape = RoundedCornerShape(10.dp))
-        .padding(15.dp),
+        .padding(15.dp)
+        .clickable {  navController.navigate(Destination.ReservationDetails.route) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ){
@@ -66,7 +71,7 @@ fun ReservationElement()
                     Row (horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.padding(2.dp)){
                         Text(
-                            text = "Active",
+                            text = "${reservation.status}",
                             color = Color.Black,
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
@@ -79,14 +84,17 @@ fun ReservationElement()
                 }
 
             }
-            Text(text = "Name Park", fontSize = 18.sp , fontWeight = FontWeight.Bold , modifier = Modifier.padding(top = 7.dp))
-                Text(text = "53 Strret ouedsmar alger",
+            Text(text = "${reservation.parking.nom}", fontSize = 18.sp , fontWeight = FontWeight.Bold , modifier = Modifier.padding(top = 7.dp))
+                Text(text = "${reservation.parking.address.commune} , ${reservation.parking.address.wilaya}",
                     color = Color(0x4B2D2D2D), // Hexadecimal color value (e.g., #3366FF)
-                )
+                    fontSize = 14.sp,
+
+                    )
 
             Text(
                 modifier = Modifier.padding(top = 15.dp),
-                text = "12-15-2022 15:00")
+                fontSize = 12.sp,
+                text = "${reservation.dateAndTimeDebut}")
 
         }
     }

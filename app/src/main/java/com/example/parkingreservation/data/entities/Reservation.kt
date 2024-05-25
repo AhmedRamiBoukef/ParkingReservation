@@ -39,3 +39,19 @@ data class Address(
     val commune: String,
     val street: String // Assuming street can be empty or nullable
 )
+
+
+data class GetReservationResponse(
+    val id: Int,
+    val reservationRandomId: String,
+    val dateAndTimeReservation: String,
+    val nbrHours: Int,
+    val totalPrice: Double,
+    val userId: Int,
+    val parkingId: Int,
+    val dateAndTimeDebut: String,
+    val position: String,
+    val qRcode: String,
+    val status: String,
+    val parking: Parking
+)
