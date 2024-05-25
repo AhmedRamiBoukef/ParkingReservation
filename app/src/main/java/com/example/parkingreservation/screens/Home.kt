@@ -1,32 +1,23 @@
 package com.example.parkingreservation.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,9 +31,10 @@ import com.example.parkingreservation.data.entities.Parking
 @Composable
 fun Home(navController: NavHostController) {
     val parkings = remember { getDummyParkings() }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0XFF081024))
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0XFF081024))
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -51,7 +43,7 @@ fun Home(navController: NavHostController) {
                 HeaderSection()
             }
             item {
-                ParkingSpacesSection(navController,parkings)
+                ParkingSpacesSection(navController, parkings)
             }
         }
     }
@@ -112,14 +104,13 @@ fun getDummyParkings(): List<Parking> {
     )
 }
 
-
 @Composable
 fun HeaderSection() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(220.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp)
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.home_bg),
             contentDescription = null,
@@ -134,9 +125,7 @@ fun HeaderSection() {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             Row {
-
                 Column {
-
                     Row {
                         Text(
                             text = "Hello Djamel \uD83D\uDC4B\uD83C\uDFFB",
@@ -144,8 +133,7 @@ fun HeaderSection() {
                             fontWeight = FontWeight.Bold,
                             fontSize = 25.sp,
                             modifier = Modifier.padding(start = 16.dp),
-
-                            )
+                        )
                     }
                     Text(
                         text = "Find an easy parking spot",
@@ -161,7 +149,6 @@ fun HeaderSection() {
                     modifier = Modifier
                         .size(40.dp)
                         .background(color = Color(0XFF2A344E), shape = RoundedCornerShape(10.dp))
-
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -171,7 +158,6 @@ fun HeaderSection() {
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Spacer(modifier = Modifier.width(8.dp))
                 val searchText = remember { mutableStateOf("") }
                 OutlinedTextField(
@@ -194,18 +180,17 @@ fun HeaderSection() {
                         Color.White.copy(alpha = 0.6f),
                         unfocusedBorderColor = Color.Transparent
                     ),
-
-
-
-                    )
+                )
             }
-
         }
     }
 }
 
 @Composable
 fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parking>) {
+    var selectedTab by remember { mutableStateOf(0) }
+    val tabs = listOf("Neasrest", "Populaire", "Wanted")
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -214,17 +199,69 @@ fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parkin
                 shape = AbsoluteRoundedCornerShape(topLeft = 40.dp, topRight = 40.dp)
             )
             .padding(horizontal = 30.dp)
-            .padding(vertical = 50.dp),
+            .padding(vertical = 20.dp),
     ) {
-        Text(
-            text = "Nearest Parking Spaces",
-            color = Color(0xFF0A1124),
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        parkings.take(5).forEach { parking ->
-            ParkingItem(parking, navController)
-            Spacer(modifier = Modifier.height(16.dp))
+        TabRow(selectedTabIndex = selectedTab,
+
+            indicator = {},
+            containerColor = Color.Transparent,
+            divider = {},
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { selectedTab = index },
+                    modifier = Modifier.background(Color.Transparent),
+
+                    text = {
+                        if (selectedTab == index){
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+
+
+                            ){
+                                Image(
+                                    painter = painterResource(id = R.drawable.home_menu_bg),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.FillBounds
+                                )
+                                Text(
+                                    text = tab,
+                                    color = if (selectedTab == index) Color.White else Color.Gray,
+                                    fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                )
+                            }
+                        }else{
+                            Text(
+                                text = tab,
+                                color = if (selectedTab == index) Color.White else Color.Gray,
+                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
+
+                            )
+                        }
+                    }
+                )
+
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val displayedParkings = when (selectedTab) {
+            1 -> parkings.sortedByDescending { it.nbrDisponiblePlaces }
+            2 -> parkings.sortedByDescending { it.nbrTotalPlaces - it.nbrDisponiblePlaces }
+            else -> parkings
+        }
+
+        Column(modifier = Modifier.padding(vertical = 16.dp)) {
+            displayedParkings.take(5).forEach { parking ->
+                ParkingItem(parking, navController)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -239,7 +276,6 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             .clickable { navController.navigate(Destination.ParkingDetails.createRoute(parking.id)) }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-
             Image(
                 painter = painterResource(id = R.drawable.parking_image),
                 contentDescription = "Parking Icon",
@@ -257,7 +293,7 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "7 min", // Utilisation des données du parking
+                        text = "7 min", // Exemple de données statiques
                         color = Color(0xFFF43939).copy(alpha = 0.8f),
                         modifier = Modifier
                             .background(
@@ -265,9 +301,7 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .padding(horizontal = 8.dp, vertical = 4.dp)
-
                     )
-
                 }
                 Text(
                     text = parking.address, // Utilisation de l'adresse du parking
@@ -276,12 +310,11 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
                 Spacer(modifier = Modifier.height(15.dp))
                 Row {
                     Text(
-                        text = "$7", // Utilisation des données du parking
+                        text = "$7", // Exemple de prix statique
                         color = Color(0xFFF43939),
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
-
-                        )
+                    )
                     Text(
                         text = "/hour",
                         color = Color(0xFFF43939),
