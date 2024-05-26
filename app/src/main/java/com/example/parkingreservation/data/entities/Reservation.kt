@@ -55,3 +55,8 @@ data class GetReservationResponse(
     val status: String,
     val parking: Parking
 )
+
+data class CancelReservationResponse(
+    val id: Int,
+    val error : String
+)

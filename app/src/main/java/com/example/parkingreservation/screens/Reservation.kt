@@ -45,14 +45,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.Components.DateUtils
 import com.example.parkingreservation.R
+import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.ParkingInfoResponse
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.ReservationModel
@@ -75,15 +78,12 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
     var showDialog by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
-    var parkingInfo = remember { mutableStateOf<ParkingInfoResponse?>(null) }
 
     // Fetch parking information when the composable is initialized
     LaunchedEffect(Unit) {
         try {
             val parkingInfoResponse = reservationModel.getParkingInfo(parkingId)
-            if (reservationModel.success.value) {
-                parkingInfo.value = reservationModel.parkingInfo.value
-            } else {
+            if (!reservationModel.success.value) {
                 Toast.makeText(applicationContext, "Error in loading Page", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
@@ -120,7 +120,13 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val painter: Painter = painterResource(id = R.drawable.reservation)
+             //val painter: Painter = painterResource(id = R.drawable.reservation)
+
+            val imageUrl =
+                "$URL${reservationModel.parkingInfo.value?.parking?.photo}"
+            val painter = rememberAsyncImagePainter(model = imageUrl)
+
+
             Image(
                 painter = painter,
                 contentDescription = "reservation image",
@@ -132,17 +138,17 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Column {
                     Text(
-                        text = "${parkingInfo.value?.parking?.nom}",
+                        text = "${reservationModel.parkingInfo.value?.parking?.nom}",
                         fontSize = 20.sp, // Change the font size to 20 sp (scaled pixels)
                         fontWeight = FontWeight.Bold, // Change the font weight to bold
                     )
                     Text(
-                        text = "${parkingInfo.value?.parking?.address?.commune}, ${parkingInfo.value?.parking?.address?.wilaya}",
+                        text = "${reservationModel.parkingInfo.value?.parking?.address?.commune}, ${reservationModel.parkingInfo.value?.parking?.address?.wilaya}",
                         color = Color(0x4B2D2D2D), // Hexadecimal color value (e.g., #3366FF)
                         modifier = Modifier.padding(top = 5.dp)
 
@@ -153,7 +159,7 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
                         .background(color = Color(0xFFFFF3F3), shape = RoundedCornerShape(16.dp))
                 ) {
                     Text(
-                        text = "$${parkingInfo.value?.parking?.pricePerHour}/h",
+                        text = "$${reservationModel.parkingInfo.value?.parking?.pricePerHour}/h",
                         color = Color(0xFFF43939),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold, // Change the font weight to bold

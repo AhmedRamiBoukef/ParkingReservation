@@ -40,7 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.URL
+import com.example.parkingreservation.viewmodel.CancelReservationModel
 import com.example.parkingreservation.viewmodel.GetReservationsModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -78,6 +82,7 @@ fun ReservationDetails(
     navController: NavHostController,
     getReservationsModel: GetReservationsModel,
     applicationContext: Context,
+    cancelReservationModel: CancelReservationModel,
     reservationId: Int
 )
 {
@@ -147,6 +152,7 @@ fun ReservationDetails(
 
             )
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                InfoElement(key = "Status :", value = "${getReservationsModel.reservation.value?.status}")
                 InfoElement(key = "Name Parking : ", value = "${getReservationsModel.reservation.value?.parking?.nom}")
                 InfoElement(key = "Address : ", value = "${getReservationsModel.reservation.value?.parking?.address?.commune} , ${getReservationsModel.reservation.value?.parking?.address?.wilaya}")
                 InfoElement(key = "Place : ", value = "${getReservationsModel.reservation.value?.position }")
@@ -209,20 +215,24 @@ fun ReservationDetails(
                         .fillMaxSize(0.7f),
                     contentScale = ContentScale.Fit
                 )
-                Button(
-                    onClick = { showDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF0000)),
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                        .padding(top = 25.dp)
-                        .fillMaxWidth(0.9f),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = "Cancel Reservation",
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                if(getReservationsModel.reservation.value?.status == "active") {
+                    Button(
+                        onClick = {
+                            showDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF0000)),
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .padding(top = 25.dp)
+                            .fillMaxWidth(0.9f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Cancel Reservation",
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
@@ -233,7 +243,33 @@ fun ReservationDetails(
                     },
                     confirmButton = {
                         TextButton(
-                            onClick = { showDialog = false },
+                            onClick = {
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    try {
+                                        val reponse =
+                                            cancelReservationModel.cancelReservationById(reservationId)
+                                        if (!cancelReservationModel.success.value) {
+
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "Error in Cancel Reservation",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        else{
+                                            val reponse = getReservationsModel.getReservationById(reservationId)
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "An error occurred: ${e.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                                showDialog = false
+                                      },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                             modifier = Modifier
                                 .fillMaxWidth(0.45f),

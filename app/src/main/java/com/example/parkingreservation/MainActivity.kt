@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.parkingreservation.ui.theme.ParkingReservationTheme
+import com.example.parkingreservation.viewmodel.CancelReservationModel
 import com.example.parkingreservation.viewmodel.GetReservationsModel
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.ReservationModel
@@ -29,6 +30,11 @@ class MainActivity : ComponentActivity() {
     private val getReservationsModel : GetReservationsModel by viewModels {
         GetReservationsModel.Factory((application as MyApplication).getReservationsRespository)
     }
+
+    private val cancelReservationModel : CancelReservationModel by viewModels {
+        CancelReservationModel.Factory((application as MyApplication).cancelReservationRespository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -40,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    GetMain(navController,signupModel,loginModel,reservationModel,getReservationsModel,applicationContext)
+                    GetMain(navController,signupModel,loginModel,reservationModel,getReservationsModel,cancelReservationModel,applicationContext)
                 }
             }
         }
