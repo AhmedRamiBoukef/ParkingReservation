@@ -157,6 +157,7 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
             indicator = {},
             containerColor = Color.Transparent,
             divider = {},
+            contentColor = Color(0xFFF4F4FA),
         ) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
@@ -244,7 +245,7 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
             .padding(16.dp)
-            .clickable { navController.navigate("parkingDetails/${parking.id}") }
+            .clickable { navController.navigate(Destination.ParkingDetails.createRoute(parkingId = parking.id)) }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
