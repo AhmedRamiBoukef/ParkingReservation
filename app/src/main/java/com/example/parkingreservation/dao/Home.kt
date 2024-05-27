@@ -2,11 +2,13 @@ package com.example.parkingreservation.dao
 
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.Parking
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+
 
 interface Home {
     @GET("api/parkings/all")
@@ -22,11 +24,16 @@ interface Home {
     suspend fun getWantedParkings(): Response<List<Parking>>
 
     companion object {
-        var home: Home? = null
-        fun createHome(): Home {
+        private var home: Home? = null
+        fun createHome(token: String): Home {
             if (home == null) {
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(AuthInterceptor(token))
+                    .build()
+
                 home = Retrofit.Builder()
                     .baseUrl(URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(Home::class.java)

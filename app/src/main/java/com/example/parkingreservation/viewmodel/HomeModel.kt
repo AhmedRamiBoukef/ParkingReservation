@@ -15,13 +15,16 @@ class HomeViewModel(private val homeRepository: HomeRepository): ViewModel() {
     var loading = mutableStateOf(true)
     var error = mutableStateOf(false)
 
+    init {
+        fetchNearestParkings(35.55, 6.5)
+    }
 
     fun fetchAllParkings() {
         viewModelScope.launch {
             loading.value = true
             error.value = false
             try {
-                val response = homeRepository.getAllParkings()
+                val response = withContext(Dispatchers.IO) { homeRepository.getAllParkings() }
                 if (response.isSuccessful) {
                     parkings.value = response.body() ?: emptyList()
                 } else {
@@ -37,19 +40,19 @@ class HomeViewModel(private val homeRepository: HomeRepository): ViewModel() {
 
     fun fetchNearestParkings(longitude: Double, latitude: Double) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                try {
-                    val response = homeRepository.getNearestParkings(longitude, latitude)
-                    if (response.isSuccessful) {
-                        parkings.value = response.body()!!
-                    } else {
-                        error.value = true
-                    }
-                } catch (e: Exception) {
+            loading.value = true
+            error.value = false
+            try {
+                val response = withContext(Dispatchers.IO) { homeRepository.getNearestParkings(longitude, latitude) }
+                if (response.isSuccessful) {
+                    parkings.value = response.body() ?: emptyList()
+                } else {
                     error.value = true
-                } finally {
-                    loading.value = false
                 }
+            } catch (e: Exception) {
+                error.value = true
+            } finally {
+                loading.value = false
             }
         }
     }
@@ -59,7 +62,7 @@ class HomeViewModel(private val homeRepository: HomeRepository): ViewModel() {
             loading.value = true
             error.value = false
             try {
-                val response = homeRepository.getPopularParkings()
+                val response = withContext(Dispatchers.IO) { homeRepository.getPopularParkings() }
                 if (response.isSuccessful) {
                     parkings.value = response.body() ?: emptyList()
                 } else {
@@ -78,7 +81,7 @@ class HomeViewModel(private val homeRepository: HomeRepository): ViewModel() {
             loading.value = true
             error.value = false
             try {
-                val response = homeRepository.getWantedParkings()
+                val response = withContext(Dispatchers.IO) { homeRepository.getWantedParkings() }
                 if (response.isSuccessful) {
                     parkings.value = response.body() ?: emptyList()
                 } else {

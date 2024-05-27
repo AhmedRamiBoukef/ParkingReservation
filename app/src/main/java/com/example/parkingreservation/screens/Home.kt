@@ -5,8 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -26,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
+import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.Parking
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
@@ -34,81 +37,21 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Home(navController: NavHostController) {
-    val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome())
+    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
+    val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
-    val parkings = homeViewModel.parkings.value
-    Box(
+    val parkings by homeViewModel.parkings
+
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0XFF081024))
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            item {
-                HeaderSection()
-            }
-            item {
-                ParkingSpacesSection(navController, homeViewModel, parkings)
-            }
-        }
+        HeaderSection()
+        ParkingSpacesSection(navController, homeViewModel, parkings)
     }
 }
-/*
-fun getDummyParkings(): List<Parking> {
-    return listOf(
-        Parking(
-            id = 1,
-            photo = "url_de_la_photo_1",
-            nom = "Parking 1",
-            address = "Adresse 1",
-            description = "Description du parking 1",
-            nbrTotalPlaces = 50,
-            nbrDisponiblePlaces = 20,
-            places = "Emplacements du parking 1"
-        ),
-        Parking(
-            id = 2,
-            photo = "url_de_la_photo_2",
-            nom = "Parking 2",
-            address = "Adresse 2",
-            description = "Description du parking 2",
-            nbrTotalPlaces = 70,
-            nbrDisponiblePlaces = 30,
-            places = "Emplacements du parking 2"
-        ),
-        Parking(
-            id = 3,
-            photo = "url_de_la_photo_3",
-            nom = "Parking 3",
-            address = "Adresse 3",
-            description = "Description du parking 3",
-            nbrTotalPlaces = 80,
-            nbrDisponiblePlaces = 40,
-            places = "Emplacements du parking 3"
-        ),
-        Parking(
-            id = 4,
-            photo = "url_de_la_photo_4",
-            nom = "Parking 4",
-            address = "Adresse 4",
-            description = "Description du parking 4",
-            nbrTotalPlaces = 60,
-            nbrDisponiblePlaces = 25,
-            places = "Emplacements du parking 4"
-        ),
-        Parking(
-            id = 5,
-            photo = "url_de_la_photo_5",
-            nom = "Parking 5",
-            address = "Adresse 5",
-            description = "Description du parking 5",
-            nbrTotalPlaces = 90,
-            nbrDisponiblePlaces = 50,
-            places = "Emplacements du parking 5"
-        )
-    )
-}*/
 
 @Composable
 fun HeaderSection() {
@@ -196,16 +139,18 @@ fun HeaderSection() {
 fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeViewModel, parkings: List<Parking>) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Nearest", "Popular", "Wanted")
+    val isLoading by homeViewModel.loading
+    val isError by homeViewModel.error
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(
                 color = Color(0xFFF4F4FA),
                 shape = AbsoluteRoundedCornerShape(topLeft = 40.dp, topRight = 40.dp)
             )
             .padding(horizontal = 30.dp)
-            .padding(vertical = 20.dp),
+            .padding(vertical = 20.dp)
     ) {
         TabRow(
             selectedTabIndex = selectedTab,
@@ -257,10 +202,36 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Column(modifier = Modifier.padding(vertical = 16.dp)) {
-            parkings.take(5).forEach { parking ->
-                ParkingItem(parking, navController)
-                Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .padding(vertical = 16.dp)
+                )
+            } else if (isError) {
+                Text(
+                    text = "Error loading data",
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .padding(vertical = 16.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(parkings) { parking ->
+                        ParkingItem(parking, navController)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
             }
         }
     }
@@ -276,12 +247,12 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             .clickable { navController.navigate("parkingDetails/${parking.id}") }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            /*Image(
-                painter = rememberAsyncImagePainter(model = parking.photo),
+            Image(
+                painter = rememberAsyncImagePainter(model = URL+parking.photo),
                 contentDescription = "Parking Icon",
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop
-            )*/
+                modifier = Modifier.size(90.dp),
+                contentScale = ContentScale.FillBounds
+            )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.fillMaxSize()) {
                 Row {
@@ -326,4 +297,3 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
         }
     }
 }
-

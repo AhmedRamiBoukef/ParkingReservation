@@ -23,5 +23,9 @@ sealed class Destination(val route:String, val icon: ImageVector = Icons.Default
     object ReservationDetails:Destination("ReservationDetails")
 
     object ReservationHistory:Destination("ReservationHistory" ,Icons.Default.DateRange,"My Reservations")
+    object ParkingDetails:Destination("ParkingDetails/{parkingId}"){
+        fun createRoute(parkingId : Int)= "ParkingDetails/$parkingId"
+    }
+    object Notification:Destination("Notification")
 
 }

@@ -11,11 +11,13 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 
 import androidx.navigation.navArgument
+import com.example.parkingreservation.screens.Home
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
 import com.example.parkingreservation.screens.MakeReservation
 import com.example.parkingreservation.screens.MesReservationActive
 import com.example.parkingreservation.screens.MyHistory
+import com.example.parkingreservation.screens.ParkingDetailsScreen
 import com.example.parkingreservation.screens.ReservationDetails
 import com.example.parkingreservation.screens.ParkingMap
 import com.example.parkingreservation.screens.Profile
@@ -88,8 +90,11 @@ fun GetMain(
                 )
             }
         }
-        composable(Destination.Home.route) { ParkingMap() }
-        composable(Destination.Profile.route) { Profile() }
+        composable(Destination.Home.route) { Home(navController = navController)}
+        composable(Destination.ParkingDetails.route) { backStackEntry ->
+            val parkingId = backStackEntry.arguments?.getInt("parkingId")
+            ParkingDetailsScreen(parkingId, navController = navController)
+        }
 
 
     }
