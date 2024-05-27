@@ -14,7 +14,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.parkingreservation.screens.BottomNavBar
 import com.example.parkingreservation.screens.Destination
 import com.example.parkingreservation.ui.theme.ParkingReservationTheme
+import com.example.parkingreservation.viewmodel.CancelReservationModel
+import com.example.parkingreservation.viewmodel.GetReservationsModel
 import com.example.parkingreservation.viewmodel.LoginModel
+import com.example.parkingreservation.viewmodel.ReservationModel
 import com.example.parkingreservation.viewmodel.SignupModel
 import com.example.parkingreservation.viewmodel.TokenModel
 
@@ -26,6 +29,17 @@ class MainActivity : ComponentActivity() {
     private val loginModel: LoginModel by viewModels {
         LoginModel.Factory((application as MyApplication).loginRepository)
     }
+    private val reservationModel:ReservationModel by viewModels {
+        ReservationModel.Factory((application as MyApplication).reservationRepository)
+    }
+    private val getReservationsModel : GetReservationsModel by viewModels {
+        GetReservationsModel.Factory((application as MyApplication).getReservationsRespository)
+    }
+
+    private val cancelReservationModel : CancelReservationModel by viewModels {
+        CancelReservationModel.Factory((application as MyApplication).cancelReservationRespository)
+    }
+
 
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -41,7 +55,7 @@ class MainActivity : ComponentActivity() {
                 val showBottomBar = currentDestination?.route in listOf(
                     Destination.Home.route,
                     Destination.Notifications.route,
-                    Destination.MyReservations.route,
+                    Destination.ReservationHistory.route,
                     Destination.Profile.route
                 )
                 Scaffold(
@@ -52,13 +66,16 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) {
+
                     val sharedPreferences = applicationContext.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
                     val tokenModel: TokenModel by viewModels {
                         TokenModel.Factory(sharedPreferences)
                     }
-                    GetMain(navController,tokenModel,signupModel,loginModel)
+                    GetMain(navController,tokenModel,signupModel,loginModel,reservationModel,getReservationsModel,cancelReservationModel,applicationContext)
+
                 }
             }
         }
     }
+
 }

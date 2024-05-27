@@ -14,7 +14,14 @@ sealed class Destination(val route:String, val icon: ImageVector = Icons.Default
     object Signup:Destination("Signup")
     object Home : Destination("home", Icons.Default.Home, "Home")
     object Notifications : Destination("notifications", Icons.Default.Notifications, "Notification")
-    object MyReservations : Destination("reservations", Icons.Default.DateRange, "My Reservations")
     object Profile : Destination("profile", Icons.Default.Person, "Profile")
+
+    object Reservation:Destination("Reservation")
+
+    object MyActiveReservation:Destination("ActiveReservation")
+
+    object ReservationDetails:Destination("ReservationDetails")
+
+    object ReservationHistory:Destination("ReservationHistory" ,Icons.Default.DateRange,"My Reservations")
 
 }
