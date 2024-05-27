@@ -387,7 +387,7 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
                                     try {
                                         // Launch a coroutine to create the reservation
                                             val response = reservationModel.createReservation(
-                                                9,
+                                                parkingId = parkingId,
                                                 nbrHours.value,
                                                 "${dateToString}T${String.format("%02d", timeState.hour)}:${String.format("%02d", timeState.minute)}"
                                             )

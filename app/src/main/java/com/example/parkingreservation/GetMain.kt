@@ -30,7 +30,7 @@ fun GetMain(
     cancelReservationModel: CancelReservationModel,
     applicationContext: Context
 ) {
-    NavHost(navController = navController, startDestination = Destination.Reservation.route ) {
+    NavHost(navController = navController, startDestination = Destination.MyActiveReservation.route ) {
 
         composable(Destination.Landing.route) { LandingPage(navController) }
         composable(Destination.Login.route) { Login(navController,loginModel,applicationContext) }

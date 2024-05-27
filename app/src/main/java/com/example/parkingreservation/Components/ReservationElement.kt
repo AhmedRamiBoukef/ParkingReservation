@@ -27,7 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
+import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.GetReservationResponse
 import com.example.parkingreservation.screens.Destination
 
@@ -44,7 +46,10 @@ fun ReservationElement(reservation: GetReservationResponse, navController: NavHo
         verticalAlignment = Alignment.Top
     ){
         Box(modifier = Modifier.background(color = Color.Transparent,shape = RoundedCornerShape(90))){
-            val painter: Painter = painterResource(id = R.drawable.park)
+           // val painter: Painter = painterResource(id = R.drawable.park)
+            val imageUrl =
+                "$URL${reservation.parking.photo}"
+            val painter = rememberAsyncImagePainter(model = imageUrl)
             Image(
                 modifier = Modifier
                     .size(120.dp)
