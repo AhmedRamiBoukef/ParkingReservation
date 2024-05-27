@@ -47,7 +47,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
     LaunchedEffect(key1 = Unit) {
-        homeViewModel.fetchParkingById(22, 35.55, 6.5)
+        homeViewModel.fetchParkingById(parkingId!!, 35.55, 6.5)
     }
     val parkingDetails by homeViewModel.parkingDetails
     val isLoading by homeViewModel.loading
@@ -84,7 +84,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Details ${parkingId}",
+                    text = "Details",
                     color = Color(0XFF2D2D2D),
                     modifier = Modifier.padding(top = 10.dp)
                 )

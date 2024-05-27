@@ -245,7 +245,9 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
             .padding(16.dp)
-            .clickable { navController.navigate(Destination.ParkingDetails.createRoute(parkingId = parking.id)) }
+            .clickable {
+                navController.navigate("${Destination.ParkingDetails.route}/${parking.id}")
+            }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
