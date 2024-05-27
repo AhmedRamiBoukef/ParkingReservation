@@ -31,5 +31,6 @@ fun GetMain(
             val parkingId = backStackEntry.arguments?.getInt("parkingId")
             ParkingDetailsScreen(parkingId, navController = navController)
         }
+
     }
 }

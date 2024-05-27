@@ -3,7 +3,6 @@ package com.example.parkingreservation.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
@@ -23,14 +22,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
 import com.example.parkingreservation.data.entities.Parking
+import com.example.parkingreservation.repository.HomeRepository
+import com.example.parkingreservation.viewmodel.HomeViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun Home(navController: NavHostController) {
-    val parkings = remember { getDummyParkings() }
+    val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome())
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
+    val parkings = homeViewModel.parkings.value
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,12 +49,12 @@ fun Home(navController: NavHostController) {
                 HeaderSection()
             }
             item {
-                ParkingSpacesSection(navController, parkings)
+                ParkingSpacesSection(navController, homeViewModel, parkings)
             }
         }
     }
 }
-
+/*
 fun getDummyParkings(): List<Parking> {
     return listOf(
         Parking(
@@ -102,7 +108,7 @@ fun getDummyParkings(): List<Parking> {
             places = "Emplacements du parking 5"
         )
     )
-}
+}*/
 
 @Composable
 fun HeaderSection() {
@@ -187,9 +193,9 @@ fun HeaderSection() {
 }
 
 @Composable
-fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parking>) {
+fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeViewModel, parkings: List<Parking>) {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Neasrest", "Populaire", "Wanted")
+    val tabs = listOf("Nearest", "Popular", "Wanted")
 
     Column(
         modifier = Modifier
@@ -201,8 +207,8 @@ fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parkin
             .padding(horizontal = 30.dp)
             .padding(vertical = 20.dp),
     ) {
-        TabRow(selectedTabIndex = selectedTab,
-
+        TabRow(
+            selectedTabIndex = selectedTab,
             indicator = {},
             containerColor = Color.Transparent,
             divider = {},
@@ -210,17 +216,20 @@ fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parkin
             tabs.forEachIndexed { index, tab ->
                 Tab(
                     selected = selectedTab == index,
-                    onClick = { selectedTab = index },
+                    onClick = {
+                        selectedTab = index
+                        when (index) {
+                            0 -> homeViewModel.fetchNearestParkings(35.55, 6.5)
+                            1 -> homeViewModel.fetchPopularParkings()
+                            2 -> homeViewModel.fetchWantedParkings()
+                        }
+                    },
                     modifier = Modifier.background(Color.Transparent),
-
                     text = {
-                        if (selectedTab == index){
+                        if (selectedTab == index) {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-
-
-                            ){
+                                modifier = Modifier.fillMaxSize()
+                            ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.home_menu_bg),
                                     contentDescription = null,
@@ -231,34 +240,25 @@ fun ParkingSpacesSection(navController: NavHostController, parkings: List<Parkin
                                     text = tab,
                                     color = if (selectedTab == index) Color.White else Color.Gray,
                                     fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
+                                    modifier = Modifier.align(Alignment.Center)
                                 )
                             }
-                        }else{
+                        } else {
                             Text(
                                 text = tab,
                                 color = if (selectedTab == index) Color.White else Color.Gray,
                                 fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-
                             )
                         }
                     }
                 )
-
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val displayedParkings = when (selectedTab) {
-            1 -> parkings.sortedByDescending { it.nbrDisponiblePlaces }
-            2 -> parkings.sortedByDescending { it.nbrTotalPlaces - it.nbrDisponiblePlaces }
-            else -> parkings
-        }
-
         Column(modifier = Modifier.padding(vertical = 16.dp)) {
-            displayedParkings.take(5).forEach { parking ->
+            parkings.take(5).forEach { parking ->
                 ParkingItem(parking, navController)
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -273,27 +273,28 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
             .padding(16.dp)
-            .clickable { navController.navigate(Destination.ParkingDetails.createRoute(parking.id)) }
+            .clickable { navController.navigate("parkingDetails/${parking.id}") }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.parking_image),
+            /*Image(
+                painter = rememberAsyncImagePainter(model = parking.photo),
                 contentDescription = "Parking Icon",
-                contentScale = ContentScale.FillBounds
-            )
+                modifier = Modifier.size(64.dp),
+                contentScale = ContentScale.Crop
+            )*/
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.fillMaxSize()) {
                 Row {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = parking.nom, // Utilisation du nom du parking
+                        text = parking.nom,
                         color = Color(0xFF2D2D2D),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "7 min", // Exemple de données statiques
+                        text = "7 min",
                         color = Color(0xFFF43939).copy(alpha = 0.8f),
                         modifier = Modifier
                             .background(
@@ -304,13 +305,13 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
                     )
                 }
                 Text(
-                    text = parking.address, // Utilisation de l'adresse du parking
+                    text = "${parking.address.commune}, ${parking.address.wilaya}",
                     color = Color(0xFF2D2D2D)
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 Row {
                     Text(
-                        text = "$7", // Exemple de prix statique
+                        text = "$${parking.pricePerHour}",
                         color = Color(0xFFF43939),
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
@@ -325,3 +326,4 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
         }
     }
 }
+

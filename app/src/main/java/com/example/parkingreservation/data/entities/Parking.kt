@@ -4,10 +4,9 @@ data class Parking(
     val id: Int,
     val photo: String,
     val nom: String,
-    val address: String,
+    val addressId: Int,
     val description: String,
     val nbrTotalPlaces: Int,
-    val nbrDisponiblePlaces: Int,
-    val places: String
+    val pricePerHour: Double,
+    val address: Address
 )
-
