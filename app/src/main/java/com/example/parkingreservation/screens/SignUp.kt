@@ -1,6 +1,5 @@
 package com.example.parkingreservation.screens
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,18 +40,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 import com.example.parkingreservation.viewmodel.SignupModel
+import com.example.parkingreservation.viewmodel.TokenModel
 
 @Composable
-fun SignUp(navController: NavHostController, signupModel: SignupModel, applicationContext: Context) {
+fun SignUp(navController: NavHostController, signupModel: SignupModel, tokenModel: TokenModel) {
     var fullname = remember { mutableStateOf(TextFieldValue("")) }
     var address = remember { mutableStateOf(TextFieldValue("")) }
     var phonenumber = remember { mutableStateOf(TextFieldValue("")) }
     var email = remember { mutableStateOf(TextFieldValue("")) }
     var password = remember { mutableStateOf(TextFieldValue("")) }
     var passwordVisibility = remember { mutableStateOf(false) }
+    val applicationContext = LocalContext.current
 
 
-    Column {
+
+    Column (
+        modifier = Modifier.background(Color(0xFF130F26)),
+    ) {
         Box(modifier = Modifier.height(150.dp).fillMaxWidth()) {
             Image(
                 painter = painterResource(id = R.drawable.bg_landing),
@@ -59,7 +64,7 @@ fun SignUp(navController: NavHostController, signupModel: SignupModel, applicati
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.matchParentSize()
             )
-            Text(text = "Let's start!!",
+            Text(text = "Let's start!! \uD83D\uDC4B\uD83C\uDFFB",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -174,12 +179,16 @@ fun SignUp(navController: NavHostController, signupModel: SignupModel, applicati
                             password.value.text,
                             address.value.text,
                             phonenumber.value.text
-                        )
-                        if (signupModel.success.value) {
-                            Toast.makeText(applicationContext,"Succes", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Destination.Login.route)
-                        } else {
-                            Toast.makeText(applicationContext,"Error", Toast.LENGTH_SHORT).show()
+                        ) { token ->
+                            if (token != null) {
+                                tokenModel.saveToken(token)
+                                navController.navigate(Destination.Home.route) {
+                                    popUpTo(Destination.Landing.route) { inclusive = true }
+                                }
+                                Toast.makeText(applicationContext, "Signup Success", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(applicationContext, "Signup Error", Toast.LENGTH_SHORT).show()
+                            }
                         }
 
                     }) {
