@@ -256,7 +256,7 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
                             color = Color.Black.copy(alpha = 0.7f),
                             modifier = Modifier.padding(top = 5.dp),
                             fontSize = 16.sp,
-                            text = "${timeState.hour}:${timeState.minute}"
+                            text = "${String.format("%02d", timeState.hour)}:${String.format("%02d", timeState.minute)}"
                         )
                     }
 
@@ -382,24 +382,42 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
                     confirmButton = {
                         TextButton(
                             onClick = {
-
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    try {
-                                        // Launch a coroutine to create the reservation
+                                if(nbrHours.value ==0)
+                                {
+                                    Toast.makeText(applicationContext, "Error : Please choose a valid NbrHours", Toast.LENGTH_SHORT).show()
+                                }
+                                else {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        try {
+                                            // Launch a coroutine to create the reservation
                                             val response = reservationModel.createReservation(
                                                 parkingId = parkingId,
                                                 nbrHours.value,
-                                                "${dateToString}T${String.format("%02d", timeState.hour)}:${String.format("%02d", timeState.minute)}"
+                                                "${dateToString}T${
+                                                    String.format(
+                                                        "%02d",
+                                                        timeState.hour
+                                                    )
+                                                }:${String.format("%02d", timeState.minute)}"
                                             )
 
                                             if (reservationModel.successReserve.value) {
-                                                Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
-                                                navController.navigate(Destination.ReservationDetails.route)
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    "Success",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                navController.navigate("${Destination.ReservationDetails.route}/${reservationModel.reservationId.value}")
                                             } else {
-                                                Toast.makeText(applicationContext, "${reservationModel.message.value}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    "${reservationModel.message.value}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
                                     }
                                 }
 
@@ -443,7 +461,7 @@ fun Reservation(navController: NavHostController ,reservationModel: ReservationM
                                         "%02d",
                                         timeState.minute
                                     )
-                                }-${timeState.hour + nbrHours.value}:${timeState.minute} ",
+                                }-${String.format("%02d", timeState.hour + nbrHours.value)}:${String.format("%02d", timeState.minute)} ",
                                 fontWeight = FontWeight.SemiBold
                             )
                             Column(

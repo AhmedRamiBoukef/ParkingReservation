@@ -41,7 +41,7 @@ fun ReservationElement(reservation: GetReservationResponse, navController: NavHo
         .fillMaxWidth(0.9f)
         .background(Color.White, shape = RoundedCornerShape(10.dp))
         .padding(15.dp)
-        .clickable {  navController.navigate(Destination.ReservationDetails.route) },
+        .clickable {  navController.navigate("${Destination.ReservationDetails.route}/${reservation.id}") },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ){

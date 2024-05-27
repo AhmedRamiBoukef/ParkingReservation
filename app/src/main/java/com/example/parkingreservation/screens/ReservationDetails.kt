@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -203,6 +204,7 @@ fun ReservationDetails(
 
                 )
             {
+                if(getReservationsModel.reservation.value?.status == "active") {
                 val imageUrl =
                     "${URL}${getReservationsModel.reservation.value?.qRcode}"
                 val painter = rememberAsyncImagePainter(model = imageUrl)
@@ -215,7 +217,6 @@ fun ReservationDetails(
                         .fillMaxSize(0.7f),
                     contentScale = ContentScale.Fit
                 )
-                if(getReservationsModel.reservation.value?.status == "active") {
                     Button(
                         onClick = {
                             showDialog = true
@@ -233,6 +234,29 @@ fun ReservationDetails(
                             fontWeight = FontWeight.Bold
                         )
                     }
+                }
+                else{
+                    Row (modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .fillMaxSize(0.7f),
+                            horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                        ){
+                        Text(text = "${getReservationsModel.reservation.value?.status}",
+                            fontSize = 32.sp,
+
+                            color = when (getReservationsModel.reservation.value?.status) {
+                                "expired", "canceled" -> Color.Red
+                                "finished" -> Color.Blue
+                                else -> Color.Green },
+
+                                textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
                 }
             }
 

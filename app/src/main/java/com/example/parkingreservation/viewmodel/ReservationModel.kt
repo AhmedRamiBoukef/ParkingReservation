@@ -40,7 +40,6 @@ class ReservationModel(private val reservationRepository: ReservationRepository)
             if (response.isSuccessful) {
                 val reservationResponse = response.body()
                 if (reservationResponse != null) {
-                    successReserve.value = true
                     reservationId.value = reservationResponse.id
                     successReserve.value = true
                 } else {
