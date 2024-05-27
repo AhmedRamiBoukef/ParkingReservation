@@ -163,7 +163,9 @@ fun MyHistory(
                 }
             }else {
                 if (getReservationsModel.activereservation.value != null) {
-                    LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                    LazyColumn(modifier = Modifier.padding(top = 10.dp)
+                        .padding(bottom = 65.dp))
+                    {
                         items(getReservationsModel.activereservation.value!!) { reservation ->
                             reservation?.let {
                                 ReservationElement(reservation = it, navController = navController)

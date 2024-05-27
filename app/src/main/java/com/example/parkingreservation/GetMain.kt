@@ -7,13 +7,15 @@ import com.example.parkingreservation.screens.Destination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 import androidx.navigation.navArgument
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
+import com.example.parkingreservation.screens.MakeReservation
 import com.example.parkingreservation.screens.MesReservationActive
 import com.example.parkingreservation.screens.MyHistory
-import com.example.parkingreservation.screens.Reservation
 import com.example.parkingreservation.screens.ReservationDetails
 import com.example.parkingreservation.screens.ParkingMap
 import com.example.parkingreservation.screens.Profile
@@ -26,6 +28,7 @@ import com.example.parkingreservation.viewmodel.SignupModel
 import com.example.parkingreservation.viewmodel.TokenModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GetMain(
     navController: NavHostController,
@@ -42,14 +45,14 @@ fun GetMain(
 
     NavHost(
         navController = navController,
-        startDestination = Destination.ReservationHistory.route
+        startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route
     ) {
 
         composable(Destination.Landing.route) { LandingPage(navController) }
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
         composable(Destination.Reservation.route) {
-            Reservation(
+            MakeReservation(
                 navController,
                 reservationModel,
                 applicationContext,

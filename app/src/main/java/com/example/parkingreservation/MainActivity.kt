@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                 val showBottomBar = currentDestination?.route in listOf(
                     Destination.Home.route,
                     Destination.Notifications.route,
-                    Destination.MyReservations.route,
+                    Destination.ReservationHistory.route,
                     Destination.Profile.route
                 )
                 Scaffold(

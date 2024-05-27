@@ -1,11 +1,9 @@
 package com.example.parkingreservation.screens
 
 import android.content.Context
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.example.parkingreservation.Components.TimePickerDialog
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -45,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,20 +53,15 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.Components.DateUtils
 import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
-import com.example.parkingreservation.data.entities.ParkingInfoResponse
-import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.ReservationModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Reservation(navController: NavHostController ,reservationModel: ReservationModel ,applicationContext: Context,    parkingId: Int ) {
+fun MakeReservation(navController: NavHostController ,reservationModel: ReservationModel ,applicationContext: Context,    parkingId: Int ) {
     val isDatePickerVisible = remember { mutableStateOf(false) }
     val isTimePickerVisible = remember { mutableStateOf(false) }
     val timeState = rememberTimePickerState(0,0,is24Hour = false)
