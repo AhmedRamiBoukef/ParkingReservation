@@ -7,4 +7,5 @@ class LoginRepository(private val login: Login) {
     suspend fun login(email:String, password:String) = login.login(
         LoginRequest(email=email,password=password)
     )
+    suspend fun sendFCMToken(FCMToken : String) = login.sendFCMToken(FCMToken)
 }

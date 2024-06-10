@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,6 +53,15 @@ android {
 }
 
 dependencies {
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-messaging")
+
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
+
     implementation("com.google.maps.android:maps-compose:4.3.3")
 
     implementation ("androidx.navigation:navigation-compose:2.6.0")
@@ -67,6 +77,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
     //Coroutine tests
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2")
     //MockWebserver

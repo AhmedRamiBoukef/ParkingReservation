@@ -44,9 +44,13 @@ import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.TokenModel
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @Composable
 fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: TokenModel) {
@@ -128,6 +132,15 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                         loginModel.login(email.value.text, password.value.text) { token ->
                             if (token != null) {
                                 tokenModel.saveToken(token)
+                                if (tokenModel.getFCMToken() == null){
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        val token = Firebase.messaging.token.await()
+                                        loginModel.sendFCMToken(token)
+                                        withContext(Dispatchers.Main) {
+                                            tokenModel.saveFCMToken(token)
+                                        }
+                                    }
+                                }
                                 navController.navigate(Destination.Home.route) {
                                     popUpTo(Destination.Landing.route) { inclusive = true }
                                 }

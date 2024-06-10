@@ -17,6 +17,9 @@ class HomeViewModel(private val homeRepository: HomeRepository): ViewModel() {
     var error = mutableStateOf(false)
     var parkingDetails = mutableStateOf<ParkingDetails?>(null)
 
+    val latitude = mutableStateOf<Double?>(null)
+    val longitude = mutableStateOf<Double?>(null)
+
     init {
         fetchNearestParkings(35.55, 6.5)
     }

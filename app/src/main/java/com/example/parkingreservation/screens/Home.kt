@@ -1,5 +1,6 @@
 package com.example.parkingreservation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,10 +34,11 @@ import com.example.parkingreservation.data.entities.Parking
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 
 @Composable
-fun Home(navController: NavHostController) {
+fun Home(navController: NavHostController, currentLocation: Pair<Double, Double>?) {
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
@@ -49,7 +51,7 @@ fun Home(navController: NavHostController) {
             .background(Color(0XFF081024))
     ) {
         HeaderSection()
-        ParkingSpacesSection(navController, homeViewModel, parkings)
+        ParkingSpacesSection(navController, homeViewModel, parkings, currentLocation)
     }
 }
 
@@ -136,7 +138,7 @@ fun HeaderSection() {
 }
 
 @Composable
-fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeViewModel, parkings: List<Parking>) {
+fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeViewModel, parkings: List<Parking>, currentLocation: Pair<Double, Double>?) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Nearest", "Popular", "Wanted")
     val isLoading by homeViewModel.loading
@@ -165,8 +167,10 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
                     onClick = {
                         selectedTab = index
                         when (index) {
-                            0 -> homeViewModel.fetchNearestParkings(35.55, 6.5)
-                            1 -> homeViewModel.fetchPopularParkings()
+                            0 -> currentLocation?.let {
+                                Log.d("djam", "logitidue : ${it.first}, latitude : ${it.second}")
+                                homeViewModel.fetchNearestParkings(it.first, it.second)
+                            }                            1 -> homeViewModel.fetchPopularParkings()
                             2 -> homeViewModel.fetchWantedParkings()
                         }
                     },

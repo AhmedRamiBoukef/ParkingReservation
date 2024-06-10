@@ -40,7 +40,8 @@ fun GetMain(
     reservationModel: ReservationModel,
     getReservationsModel: GetReservationsModel,
     cancelReservationModel: CancelReservationModel,
-    applicationContext: Context
+    applicationContext: Context,
+    currentLocation: Pair<Double, Double>?
 ) {
     val token = tokenModel.token.value
 
@@ -90,7 +91,7 @@ fun GetMain(
                 )
             }
         }
-        composable(Destination.Home.route) { Home(navController = navController)}
+        composable(Destination.Home.route) { Home(navController = navController,currentLocation)}
         composable(
             "${Destination.ParkingDetails.route}/{parkingId}",
             arguments = listOf(navArgument("parkingId") { type = NavType.IntType })

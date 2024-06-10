@@ -30,6 +30,17 @@ class TokenModel(private val sharedPreferences: SharedPreferences) : ViewModel()
         }
     }
 
+    fun getFCMToken(): String? {
+        return sharedPreferences.getString("FCMtoken", null)
+    }
+    fun saveFCMToken(newToken: String) {
+        viewModelScope.launch {
+            val editor = sharedPreferences.edit()
+            editor.putString("FCMtoken", newToken)
+            editor.apply()
+        }
+    }
+
     fun clearToken() {
         viewModelScope.launch {
             val editor = sharedPreferences.edit()

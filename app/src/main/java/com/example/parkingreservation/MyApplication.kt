@@ -11,9 +11,11 @@ import com.example.parkingreservation.repository.LoginRepository
 import com.example.parkingreservation.repository.ReservationRepository
 import com.example.parkingreservation.repository.SignupRepository
 import com.example.parkingreservation.repository.GetReservationsRespository
+import com.google.firebase.FirebaseApp
 
 
 class MyApplication: Application() {
+
     val signup by lazy { Signup.createSignup() }
     val signupRepository by lazy { SignupRepository(signup) }
 
@@ -28,5 +30,6 @@ class MyApplication: Application() {
 
     val cancelReservationInstance by lazy { CancelReservation.getInstance() }
     val cancelReservationRespository by lazy { CancelReservationRespository(cancelReservationInstance) }
+
 
 }
