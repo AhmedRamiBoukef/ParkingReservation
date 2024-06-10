@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    implementation("com.github.stevdza-san:OneTapCompose:1.0.12")
+
+
     implementation("com.google.maps.android:maps-compose:4.3.3")
 
     implementation ("androidx.navigation:navigation-compose:2.6.0")
@@ -87,4 +90,11 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation("androidx.credentials:credentials:<latest version>")
+    implementation("androidx.credentials:credentials-play-services-auth:<latest version>")
+    implementation("com.google.android.libraries.identity.googleid:googleid:<latest version>")
+
+
+
 }

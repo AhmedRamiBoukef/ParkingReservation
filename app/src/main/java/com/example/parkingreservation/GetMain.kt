@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import com.example.parkingreservation.screens.Destination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.parkingreservation.screens.Home
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
 import com.example.parkingreservation.screens.ParkingMap
@@ -26,10 +25,10 @@ fun GetMain(
     val token = tokenModel.token.value
 
     NavHost(navController = navController, startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route) {
-        composable(Destination.Landing.route) { LandingPage(navController) }
+        composable(Destination.Landing.route) { LandingPage(navController,loginModel,tokenModel) }
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
         composable(Destination.Home.route) { ParkingMap() }
-        composable(Destination.Profile.route) { Profile() }
+        composable(Destination.Profile.route) { Profile(tokenModel) }
     }
 }

@@ -20,3 +20,13 @@ data class LoginRequest(
 data class LoginResponse(
     val token: String
 )
+
+data class LoginGoogleRequest(
+    val email:String,
+    val fullName:String,
+    val googleId:String
+)
+
+data class LoginGoogleResponse(
+    val token: String
+)

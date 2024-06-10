@@ -3,6 +3,7 @@ package com.example.parkingreservation.screens
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +45,8 @@ import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.TokenModel
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
+import com.stevdzasan.onetap.rememberOneTapSignInState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -131,7 +134,7 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                                 navController.navigate(Destination.Home.route) {
                                     popUpTo(Destination.Landing.route) { inclusive = true }
                                 }
-                                Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, "You are signed in!", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
                             }

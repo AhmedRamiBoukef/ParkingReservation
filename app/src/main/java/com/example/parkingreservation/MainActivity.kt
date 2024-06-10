@@ -20,6 +20,7 @@ import com.example.parkingreservation.viewmodel.TokenModel
 
 class MainActivity : ComponentActivity() {
 
+
     private val signupModel: SignupModel by viewModels {
         SignupModel.Factory((application as MyApplication).signupRepository)
     }
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
                     val tokenModel: TokenModel by viewModels {
                         TokenModel.Factory(sharedPreferences)
                     }
+
                     GetMain(navController,tokenModel,signupModel,loginModel)
                 }
             }
