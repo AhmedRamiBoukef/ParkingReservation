@@ -16,6 +16,7 @@ import com.google.firebase.FirebaseApp
 
 class MyApplication: Application() {
 
+
     val signup by lazy { Signup.createSignup() }
     val signupRepository by lazy { SignupRepository(signup) }
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Typeface
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.*
 import androidx.compose.foundation.Image
@@ -15,13 +14,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -37,8 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -46,7 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
+import com.example.parkingreservation.repository.HomeRepository
+import com.example.parkingreservation.viewmodel.HomeViewModel
+import com.example.parkingreservation.viewmodel.TokenModel
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -57,11 +57,34 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 
 @Composable
-fun ParkingMap() {
+fun ParkingMap(
+    navController: NavHostController,
+    currentLocation: Pair<Double, Double>?,
+    tokenModel: TokenModel
+) {
     val applicationContext = LocalContext.current
     val cameraPositionState = rememberCameraPositionState {
-        position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(
-            com.google.android.gms.maps.model.LatLng(36.7372, 3.0865), 9f
+        if (currentLocation != null) {
+            position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(
+                com.google.android.gms.maps.model.LatLng(currentLocation.first, currentLocation.second), 9f
+            )
+        } else {
+            position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(
+                com.google.android.gms.maps.model.LatLng(36.7372, 3.0865), 9f
+            )
+        }
+    }
+    val token: String = tokenModel.getToken()!!;
+    val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
+    val parkings by homeViewModel.parkings
+    val parkingSpots = parkings.map { parking ->
+        ParkingSpot(
+            parking.id,
+            parking.address.longitude,
+            parking.address.latitude,
+            "${parking.pricePerHour}",
+            "${parking.address.wilaya} ${parking.address.commune}"
         )
     }
 
@@ -82,11 +105,6 @@ fun ParkingMap() {
                     cameraPositionState = cameraPositionState,
                     properties = properties,
                 ) {
-                    val parkingSpots = listOf(
-                        ParkingSpot(36.7372, 3.0865, "$10", "Algiers"),
-                        ParkingSpot(35.6911, -0.6417, "$8", "Oran"),
-                        ParkingSpot(31.6238, -2.2159, "$5", "Ghardaia")
-                    )
 
                     parkingSpots.forEach { spot ->
                         MapMarker(
@@ -106,7 +124,7 @@ fun ParkingMap() {
                 }
                 if (selectedSpot != null) {
                     Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                        ParkingSpotDetail(selectedSpot!!, onClose = { selectedSpot = null })
+                        ParkingSpotDetail(selectedSpot!!, onClose = { selectedSpot = null },navController)
                     }
                 }
             }
@@ -116,7 +134,7 @@ fun ParkingMap() {
 
 @SuppressLint("InvalidColorHexValue")
 @Composable
-fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit) {
+fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit, navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -164,6 +182,7 @@ fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit) {
                 .padding(horizontal = 30.dp, vertical = 10.dp)
                 .fillMaxWidth(1.0f),
             onClick = {
+                navController.navigate("${Destination.ParkingDetails.route}/${spot.id}")
             }) {
             Text(
                 text = "See Details",
@@ -175,7 +194,7 @@ fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit) {
     }
 }
 
-data class ParkingSpot(val lat: Double, val lng: Double, val price: String, val address: String)
+data class ParkingSpot(val id: Int,val lat: Double, val lng: Double, val price: String, val address: String)
 
 @Composable
 fun MapMarker(

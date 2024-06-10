@@ -1,5 +1,6 @@
 package com.example.parkingreservation
 
+import ProfilePage
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,7 +21,6 @@ import com.example.parkingreservation.screens.MyHistory
 import com.example.parkingreservation.screens.ParkingDetailsScreen
 import com.example.parkingreservation.screens.ReservationDetails
 import com.example.parkingreservation.screens.ParkingMap
-import com.example.parkingreservation.screens.Profile
 import com.example.parkingreservation.screens.SignUp
 import com.example.parkingreservation.viewmodel.CancelReservationModel
 import com.example.parkingreservation.viewmodel.GetReservationsModel
@@ -55,8 +55,8 @@ fun GetMain(
         composable(Destination.Landing.route) { LandingPage(navController,loginModel,tokenModel) }
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
-        composable(Destination.Profile.route) { Profile(tokenModel) }
-        composable(Destination.Map.route) { ParkingMap() }
+        composable(Destination.Profile.route) { ProfilePage(tokenModel) }
+        composable(Destination.Map.route) { ParkingMap(navController = navController,currentLocation,tokenModel) }
 
         composable("${Destination.Reservation.route}/{parkingId}",
                 arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
@@ -84,7 +84,7 @@ fun GetMain(
                 navController,
                 getReservationsModel,
                 applicationContext,
-                token
+                tokenModel
             )
         }
         composable(
@@ -102,7 +102,7 @@ fun GetMain(
                 )
             }
         }
-        composable(Destination.Home.route) { Home(navController = navController,currentLocation)}
+        composable(Destination.Home.route) { Home(navController = navController,currentLocation,tokenModel)}
         composable(
             "${Destination.ParkingDetails.route}/{parkingId}",
             arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
@@ -111,7 +111,8 @@ fun GetMain(
             parkingId?.let {
                 ParkingDetailsScreen(
                     parkingId,
-                    navController
+                    navController,
+                    tokenModel
                 )
             }
         }

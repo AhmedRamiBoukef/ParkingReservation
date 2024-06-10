@@ -8,7 +8,6 @@ import com.example.parkingreservation.data.entities.GetReservationResponse
 import com.example.parkingreservation.repository.GetReservationsRespository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 class GetReservationsModel (private val getReservationRepository: GetReservationsRespository) : ViewModel() {
     var loadingActive = mutableStateOf(false)
@@ -19,7 +18,7 @@ class GetReservationsModel (private val getReservationRepository: GetReservation
     var loading = mutableStateOf(false)
     var success= mutableStateOf(false)
     var reservation = mutableStateOf<GetReservationResponse?>(null)
-    suspend fun getReservations(status : String): List<GetReservationResponse?>? {
+    suspend fun getReservations(status: String): List<GetReservationResponse?>? {
         loadingActive.value = true
         return try {
             val response = withContext(Dispatchers.IO) {

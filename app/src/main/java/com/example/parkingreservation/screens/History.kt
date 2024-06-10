@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.ReservationElement
 import com.example.parkingreservation.viewmodel.GetReservationsModel
+import com.example.parkingreservation.viewmodel.TokenModel
 
 
 @Composable
@@ -95,11 +96,12 @@ fun MyHistory(
     navController: NavHostController,
     getReservationsModel: GetReservationsModel,
     applicationContext: Context,
-    token: String?
+    tokenModel: TokenModel
 ) // we have active , finished  , expired , canceled
 {
     var activeStatus by remember { mutableStateOf("Active") }
     val statuses = listOf("Active", "Expired", "Finished", "Cancelled")
+    val token = tokenModel.getToken()
 
     LaunchedEffect(activeStatus) {
         try {

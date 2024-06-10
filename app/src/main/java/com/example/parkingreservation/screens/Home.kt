@@ -33,13 +33,16 @@ import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.Parking
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
-import kotlin.math.log
+import com.example.parkingreservation.viewmodel.TokenModel
 
 
 @Composable
-fun Home(navController: NavHostController, currentLocation: Pair<Double, Double>?) {
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
+fun Home(
+    navController: NavHostController,
+    currentLocation: Pair<Double, Double>?,
+    tokenModel: TokenModel
+) {
+    val token: String = tokenModel.getToken()!!;
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
     val parkings by homeViewModel.parkings
