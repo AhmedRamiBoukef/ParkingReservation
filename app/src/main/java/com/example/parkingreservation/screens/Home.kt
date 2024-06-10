@@ -166,9 +166,9 @@ fun ParkingSpacesSection(
 
     val filteredParkings = searchResultCoordinates?.let { coords ->
         parkings.filter { parking ->
-            val distance = distanceBetween(coords.first, coords.second, parking.address.latitude, parking.address.longitude)
+            val distance = distanceBetween(coords.first, coords.second, parking.address.longitude, parking.address.latitude)
             Log.d("Distance djam", "${parking.nom} qui se trouve dans ${parking.address.commune} a distance ${distance}")
-            distance <= 4.3 // Filter parkings within 5 km radius
+            distance <= 5 // Filter parkings within 5 km radius
         }
     } ?: parkings
 
@@ -366,6 +366,6 @@ fun distanceBetween(
         endLongitude,
         results
     )
-    Log.d("Distance Calculation", "Start: ($startLatitude, $startLongitude) End: ($endLatitude, $endLongitude) Distance: ${results[0] / 1000000}")
-    return results[0] / 1000000 // Convert to kilometers
+    Log.d("Distance Calculation", "Start: ($startLatitude, $startLongitude) End: ($endLatitude, $endLongitude) Distance: ${results[0] / 1000}")
+    return results[0] / 1000 // Convert to kilometers
 }

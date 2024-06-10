@@ -1,5 +1,6 @@
 package com.example.parkingreservation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,12 +43,13 @@ import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 
 @Composable
-fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
+fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController,currentLocation: Pair<Double, Double>?){
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
     LaunchedEffect(key1 = Unit) {
-        homeViewModel.fetchParkingById(parkingId!!, 35.55, 6.5)
+        homeViewModel.fetchParkingById(parkingId!!, currentLocation!!.first, currentLocation.second)
+        Log.d("djlocation", "current location : longitiude: ${currentLocation.first}, latitude: ${currentLocation.second}")
     }
     val parkingDetails by homeViewModel.parkingDetails
     val isLoading by homeViewModel.loading
@@ -163,7 +165,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
                             tint = Color(0XFFF43939)
                         )
                         Text(
-                            text = "${parkingDetails!!.distance.toInt()} m away",
+                            text = "${parkingDetails!!.distance.toInt()} km away",
                             color = Color(0xFFF43939).copy(alpha = 0.8f),
                             modifier = Modifier
                                 .background(

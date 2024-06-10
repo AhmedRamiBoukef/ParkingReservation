@@ -111,7 +111,8 @@ fun GetMain(
             parkingId?.let {
                 ParkingDetailsScreen(
                     parkingId,
-                    navController
+                    navController,
+                    currentLocation
                 )
             }
         }
