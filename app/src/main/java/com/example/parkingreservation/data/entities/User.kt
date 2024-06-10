@@ -24,3 +24,12 @@ data class LoginResponse(
 data class FCMTokenRequest(
     val fcmToken: String
 )
+data class LoginGoogleRequest(
+    val email:String,
+    val fullName:String,
+    val googleId:String
+)
+
+data class LoginGoogleResponse(
+    val token: String
+)

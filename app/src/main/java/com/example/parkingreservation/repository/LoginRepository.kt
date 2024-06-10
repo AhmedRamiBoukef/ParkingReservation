@@ -2,6 +2,7 @@ package com.example.parkingreservation.repository
 
 import com.example.parkingreservation.dao.Login
 import com.example.parkingreservation.data.entities.FCMTokenRequest
+import com.example.parkingreservation.data.entities.LoginGoogleRequest
 import com.example.parkingreservation.data.entities.LoginRequest
 
 class LoginRepository(private val login: Login) {
@@ -10,4 +11,7 @@ class LoginRepository(private val login: Login) {
     )
     suspend fun sendFCMToken(fcmToken :String) = login.sendFCMToken( FCMTokenRequest(fcmToken=fcmToken))
 
+    suspend fun loginGoogle(email:String, fullName:String, googleId:String) = login.loginWithGoogle(
+        LoginGoogleRequest(email=email,fullName=fullName,googleId=googleId)
+    )
 }

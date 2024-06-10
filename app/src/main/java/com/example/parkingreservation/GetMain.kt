@@ -52,9 +52,12 @@ fun GetMain(
         startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route
     ) {
 
-        composable(Destination.Landing.route) { LandingPage(navController) }
+        composable(Destination.Landing.route) { LandingPage(navController,loginModel,tokenModel) }
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
+        composable(Destination.Profile.route) { Profile(tokenModel) }
+        composable(Destination.Map.route) { ParkingMap() }
+
         composable("${Destination.Reservation.route}/{parkingId}",
                 arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
 

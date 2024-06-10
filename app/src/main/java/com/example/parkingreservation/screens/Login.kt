@@ -47,6 +47,7 @@ import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.TokenModel
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -148,7 +149,7 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                                 navController.navigate(Destination.Home.route) {
                                     popUpTo(Destination.Landing.route) { inclusive = true }
                                 }
-                                Toast.makeText(applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, "You are signed in!", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
                             }

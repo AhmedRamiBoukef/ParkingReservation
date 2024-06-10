@@ -2,6 +2,8 @@ package com.example.parkingreservation.dao
 
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.FCMTokenRequest
+import com.example.parkingreservation.data.entities.LoginGoogleRequest
+import com.example.parkingreservation.data.entities.LoginGoogleResponse
 import com.example.parkingreservation.data.entities.LoginRequest
 import com.example.parkingreservation.data.entities.LoginResponse
 import retrofit2.Response
@@ -17,7 +19,7 @@ import retrofit2.http.Query
 interface Login {
     @POST("api/auth/login/")
     suspend fun login(
-        @Body requestBody: LoginRequest?
+        @Body requestBody: LoginRequest
     ): Response<LoginResponse>
 
     @Headers(
@@ -26,6 +28,10 @@ interface Login {
     )
     @PUT("api/reservation/addfcm")
     suspend fun sendFCMToken(@Body fcmToken:FCMTokenRequest?)
+    @POST("api/auth/loginwithgoogle/")
+    suspend fun loginWithGoogle(
+        @Body requestBody: LoginGoogleRequest?
+    ): Response<LoginGoogleResponse>
     companion object {
         var login: Login? = null
         fun createLogin(): Login {

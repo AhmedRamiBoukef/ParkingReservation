@@ -24,6 +24,8 @@ sealed class Destination(val route:String, val icon: ImageVector = Icons.Default
 
     object ReservationHistory:Destination("ReservationHistory" ,Icons.Default.DateRange,"My Reservations")
     object ParkingDetails:Destination("ParkingDetails")
+    object Map:Destination("Map")
+
     object Notification:Destination("Notification")
 
 }
