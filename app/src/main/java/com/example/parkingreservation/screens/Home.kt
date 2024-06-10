@@ -1,5 +1,7 @@
 package com.example.parkingreservation.screens
 
+import android.content.Context
+import android.location.Geocoder
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +36,10 @@ import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.Parking
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 import kotlin.math.log
 
 
@@ -44,19 +50,28 @@ fun Home(navController: NavHostController, currentLocation: Pair<Double, Double>
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
     val parkings by homeViewModel.parkings
 
+    var searchText by remember { mutableStateOf("") }
+    var searchResultCoordinates by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0XFF081024))
     ) {
-        HeaderSection()
-        ParkingSpacesSection(navController, homeViewModel, parkings, currentLocation)
+        HeaderSection(searchText, onSearch = { query ->
+            searchText = query
+            coroutineScope.launch {
+                searchResultCoordinates = searchLocation(context, query)
+            }
+        })
+        ParkingSpacesSection(navController, homeViewModel, parkings, currentLocation, searchResultCoordinates)
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(searchText: String, onSearch: (String) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,10 +125,9 @@ fun HeaderSection() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
-                val searchText = remember { mutableStateOf("") }
                 OutlinedTextField(
-                    value = searchText.value,
-                    onValueChange = { searchText.value = it },
+                    value = searchText,
+                    onValueChange = { onSearch(it) },
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp)
@@ -138,11 +152,25 @@ fun HeaderSection() {
 }
 
 @Composable
-fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeViewModel, parkings: List<Parking>, currentLocation: Pair<Double, Double>?) {
+fun ParkingSpacesSection(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    parkings: List<Parking>,
+    currentLocation: Pair<Double, Double>?,
+    searchResultCoordinates: Pair<Double, Double>?
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Nearest", "Popular", "Wanted")
     val isLoading by homeViewModel.loading
     val isError by homeViewModel.error
+
+    val filteredParkings = searchResultCoordinates?.let { coords ->
+        parkings.filter { parking ->
+            val distance = distanceBetween(coords.first, coords.second, parking.address.latitude, parking.address.longitude)
+            Log.d("Distance djam", "${parking.nom} qui se trouve dans ${parking.address.commune} a distance ${distance}")
+            distance <= 4.3 // Filter parkings within 5 km radius
+        }
+    } ?: parkings
 
     Column(
         modifier = Modifier
@@ -170,7 +198,8 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
                             0 -> currentLocation?.let {
                                 Log.d("djam", "logitidue : ${it.first}, latitude : ${it.second}")
                                 homeViewModel.fetchNearestParkings(it.first, it.second)
-                            }                            1 -> homeViewModel.fetchPopularParkings()
+                            }
+                            1 -> homeViewModel.fetchPopularParkings()
                             2 -> homeViewModel.fetchWantedParkings()
                         }
                     },
@@ -232,7 +261,7 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(parkings) { parking ->
+                    items(filteredParkings) { parking ->
                         ParkingItem(parking, navController)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -241,7 +270,6 @@ fun ParkingSpacesSection(navController: NavHostController, homeViewModel: HomeVi
         }
     }
 }
-
 @Composable
 fun ParkingItem(parking: Parking, navController: NavHostController) {
     Box(
@@ -303,4 +331,41 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
             }
         }
     }
+}
+
+suspend fun searchLocation(context: Context, query: String): Pair<Double, Double>? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses = geocoder.getFromLocationName(query, 1)
+            if (addresses != null && addresses.isNotEmpty()) {
+                val address = addresses[0]
+                Log.d("Location Search Query", "Latitude : ${address.latitude}, Longitude : ${address.longitude}")
+                Pair(address.latitude, address.longitude)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+
+fun distanceBetween(
+    startLatitude: Double,
+    startLongitude: Double,
+    endLatitude: Double,
+    endLongitude: Double
+): Float {
+    val results = FloatArray(1)
+    android.location.Location.distanceBetween(
+        startLatitude,
+        startLongitude,
+        endLatitude,
+        endLongitude,
+        results
+    )
+    Log.d("Distance Calculation", "Start: ($startLatitude, $startLongitude) End: ($endLatitude, $endLongitude) Distance: ${results[0] / 1000000}")
+    return results[0] / 1000000 // Convert to kilometers
 }
