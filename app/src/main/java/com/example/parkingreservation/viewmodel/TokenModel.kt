@@ -17,7 +17,7 @@ class TokenModel(private val sharedPreferences: SharedPreferences) : ViewModel()
         }
     }
 
-    private fun getToken(): String? {
+    fun getToken(): String? {
         return sharedPreferences.getString("token", null)
     }
 
@@ -27,6 +27,17 @@ class TokenModel(private val sharedPreferences: SharedPreferences) : ViewModel()
             editor.putString("token", newToken)
             editor.apply()
             token.value = newToken
+        }
+    }
+
+    fun getFCMToken(): String? {
+        return sharedPreferences.getString("FCMtoken", null)
+    }
+    fun saveFCMToken(newToken: String) {
+        viewModelScope.launch {
+            val editor = sharedPreferences.edit()
+            editor.putString("FCMtoken", newToken)
+            editor.apply()
         }
     }
 

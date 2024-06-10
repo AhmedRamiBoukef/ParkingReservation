@@ -33,6 +33,12 @@ class LoginModel(private val loginRepository: LoginRepository): ViewModel() {
         }
     }
 
+    fun sendFCMToken(FCMToken:String){
+        CoroutineScope(Dispatchers.IO).launch {
+            loginRepository.sendFCMToken(FCMToken)
+        }
+    }
+
     class Factory(private val loginRepository: LoginRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return LoginModel(loginRepository) as T

@@ -188,7 +188,7 @@ fun ReservationDetails(
                     color = Color.Black
                 )
                 Text(
-                    text = "${(getReservationsModel.reservation.value?.parking?.pricePerHour ?: 0f) * (getReservationsModel.reservation.value?.nbrHours ?: 0)}$",
+                    text = "TEXT",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black

@@ -3,6 +3,7 @@ package com.example.parkingreservation.screens
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,9 +45,13 @@ import androidx.navigation.NavHostController
 import com.example.parkingreservation.R
 import com.example.parkingreservation.viewmodel.LoginModel
 import com.example.parkingreservation.viewmodel.TokenModel
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @Composable
 fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: TokenModel) {
@@ -59,7 +64,9 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
     Column (
         modifier = Modifier.background(Color(0xFF130F26)),
     ) {
-        Box(modifier = Modifier.height(150.dp).fillMaxWidth()) {
+        Box(modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth()) {
             Image(
                 painter = painterResource(id = R.drawable.bg_landing),
                 contentDescription = "landing",
@@ -128,6 +135,16 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                         loginModel.login(email.value.text, password.value.text) { token ->
                             if (token != null) {
                                 tokenModel.saveToken(token)
+                                if (tokenModel.getFCMToken() == null){
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        val token = Firebase.messaging.token.await()
+                                        Log.d("djamel token", "fcm Token : ${token}")
+                                        loginModel.sendFCMToken(token)
+                                        withContext(Dispatchers.Main) {
+                                            tokenModel.saveFCMToken(token)
+                                        }
+                                    }
+                                }
                                 navController.navigate(Destination.Home.route) {
                                     popUpTo(Destination.Landing.route) { inclusive = true }
                                 }

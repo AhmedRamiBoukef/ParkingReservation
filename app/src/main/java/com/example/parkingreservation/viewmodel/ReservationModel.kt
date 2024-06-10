@@ -36,7 +36,8 @@ class ReservationModel(private val reservationRepository: ReservationRepository)
                 reservationRepository.createReservation(parkingId, nbrHours, dateAndTimeDebut)
             }
 
-            Log.d("Reservation Model ", "createReservation: ${response.body()}")
+           
+
             if (response.isSuccessful) {
                 val reservationResponse = response.body()
                 if (reservationResponse != null) {

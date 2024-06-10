@@ -11,11 +11,13 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 
 import androidx.navigation.navArgument
+import com.example.parkingreservation.screens.Home
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
 import com.example.parkingreservation.screens.MakeReservation
 import com.example.parkingreservation.screens.MesReservationActive
 import com.example.parkingreservation.screens.MyHistory
+import com.example.parkingreservation.screens.ParkingDetailsScreen
 import com.example.parkingreservation.screens.ReservationDetails
 import com.example.parkingreservation.screens.ParkingMap
 import com.example.parkingreservation.screens.Profile
@@ -38,26 +40,34 @@ fun GetMain(
     reservationModel: ReservationModel,
     getReservationsModel: GetReservationsModel,
     cancelReservationModel: CancelReservationModel,
-    applicationContext: Context
+    applicationContext: Context,
+    currentLocation: Pair<Double, Double>?
 ) {
     val token = tokenModel.token.value
 
 
     NavHost(
         navController = navController,
+       // startDestination = Destination.Ho.route
         startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route
     ) {
 
         composable(Destination.Landing.route) { LandingPage(navController) }
         composable(Destination.Login.route) { Login(navController,loginModel,tokenModel) }
         composable(Destination.Signup.route) { SignUp(navController,signupModel,tokenModel) }
-        composable(Destination.Reservation.route) {
-            MakeReservation(
-                navController,
-                reservationModel,
-                applicationContext,
-                parkingId = 17
-            )
+        composable("${Destination.Reservation.route}/{parkingId}",
+                arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
+
+        ) {backStackEntry ->
+            val parkingId = backStackEntry.arguments?.getInt("parkingId")
+            parkingId?.let {
+                MakeReservation(
+                    navController,
+                    reservationModel,
+                    applicationContext,
+                    parkingId
+                )
+            }
         }
         composable(Destination.MyActiveReservation.route) {
             MesReservationActive(
@@ -70,7 +80,8 @@ fun GetMain(
             MyHistory(
                 navController,
                 getReservationsModel,
-                applicationContext
+                applicationContext,
+                token
             )
         }
         composable(
@@ -88,8 +99,20 @@ fun GetMain(
                 )
             }
         }
-        composable(Destination.Home.route) { ParkingMap() }
-        composable(Destination.Profile.route) { Profile() }
+        composable(Destination.Home.route) { Home(navController = navController,currentLocation)}
+        composable(
+            "${Destination.ParkingDetails.route}/{parkingId}",
+            arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val parkingId = backStackEntry.arguments?.getInt("parkingId")
+            parkingId?.let {
+                ParkingDetailsScreen(
+                    parkingId,
+                    navController
+                )
+            }
+        }
+
 
 
     }
