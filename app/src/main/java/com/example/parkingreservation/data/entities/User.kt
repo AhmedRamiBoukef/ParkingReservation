@@ -20,3 +20,7 @@ data class LoginRequest(
 data class LoginResponse(
     val token: String
 )
+
+data class FCMTokenRequest(
+    val fcmToken: String
+)

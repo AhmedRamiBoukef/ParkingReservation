@@ -20,25 +20,9 @@ data class ParkingInfoResponse(
     val distance: Float? // Assuming distance can be nullable
 )
 
-data class Parking(
-    val id: Int,
-    val photo: String,
-    val nom: String,
-    val addressId: Int,
-    val description: String,
-    val nbrTotalPlaces: Int,
-    val pricePerHour: Float,
-    val address: Address
-)
 
-data class Address(
-    val id: Int,
-    val longitude: Double,
-    val latitude: Double,
-    val wilaya: String,
-    val commune: String,
-    val street: String // Assuming street can be empty or nullable
-)
+
+
 
 
 data class GetReservationResponse(
