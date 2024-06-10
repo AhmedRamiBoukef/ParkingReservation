@@ -3,6 +3,7 @@ package com.example.parkingreservation.screens
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -63,7 +64,9 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
     Column (
         modifier = Modifier.background(Color(0xFF130F26)),
     ) {
-        Box(modifier = Modifier.height(150.dp).fillMaxWidth()) {
+        Box(modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth()) {
             Image(
                 painter = painterResource(id = R.drawable.bg_landing),
                 contentDescription = "landing",
@@ -135,6 +138,7 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                                 if (tokenModel.getFCMToken() == null){
                                     CoroutineScope(Dispatchers.IO).launch {
                                         val token = Firebase.messaging.token.await()
+                                        Log.d("djamel token", "fcm Token : ${token}")
                                         loginModel.sendFCMToken(token)
                                         withContext(Dispatchers.Main) {
                                             tokenModel.saveFCMToken(token)

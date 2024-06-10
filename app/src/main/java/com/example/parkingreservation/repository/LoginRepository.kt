@@ -1,11 +1,13 @@
 package com.example.parkingreservation.repository
 
 import com.example.parkingreservation.dao.Login
+import com.example.parkingreservation.data.entities.FCMTokenRequest
 import com.example.parkingreservation.data.entities.LoginRequest
 
 class LoginRepository(private val login: Login) {
     suspend fun login(email:String, password:String) = login.login(
         LoginRequest(email=email,password=password)
     )
-    suspend fun sendFCMToken(FCMToken : String) = login.sendFCMToken(FCMToken)
+    suspend fun sendFCMToken(fcmToken :String) = login.sendFCMToken( FCMTokenRequest(fcmToken=fcmToken))
+
 }
