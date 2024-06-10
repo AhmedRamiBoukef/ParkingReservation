@@ -17,7 +17,7 @@ class TokenModel(private val sharedPreferences: SharedPreferences) : ViewModel()
         }
     }
 
-    private fun getToken(): String? {
+    fun getToken(): String? {
         return sharedPreferences.getString("token", null)
     }
 

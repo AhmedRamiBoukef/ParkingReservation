@@ -45,7 +45,8 @@ fun GetMain(
 
     NavHost(
         navController = navController,
-        startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route
+        startDestination = Destination.ReservationHistory.route
+        //startDestination = if (token.isNullOrEmpty()) Destination.Landing.route else Destination.Home.route
     ) {
 
         composable(Destination.Landing.route) { LandingPage(navController) }
@@ -70,7 +71,8 @@ fun GetMain(
             MyHistory(
                 navController,
                 getReservationsModel,
-                applicationContext
+                applicationContext,
+                token
             )
         }
         composable(

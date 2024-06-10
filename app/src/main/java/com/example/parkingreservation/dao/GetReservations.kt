@@ -1,9 +1,9 @@
 package com.example.parkingreservation.dao
 
+import AuthInterceptor
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.GetReservationResponse
-import com.example.parkingreservation.data.entities.ParkingInfoResponse
-import com.example.parkingreservation.data.entities.ReservationResponse
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -94,10 +94,10 @@ fun InactiveStatus(status: String, onClick: () -> Unit) {
 fun MyHistory(
     navController: NavHostController,
     getReservationsModel: GetReservationsModel,
-    applicationContext: Context
+    applicationContext: Context,
+    token: String?
 ) // we have active , finished  , expired , canceled
 {
-    val textList = List(15) { index -> "Text${index + 1}" }
     var activeStatus by remember { mutableStateOf("Active") }
     val statuses = listOf("Active", "Expired", "Finished", "Cancelled")
 
