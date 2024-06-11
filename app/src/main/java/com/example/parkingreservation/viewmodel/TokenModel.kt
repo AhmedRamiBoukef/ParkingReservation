@@ -45,6 +45,7 @@ class TokenModel(private val sharedPreferences: SharedPreferences) : ViewModel()
         viewModelScope.launch {
             val editor = sharedPreferences.edit()
             editor.remove("token")
+            editor.remove("FCMToken")
             editor.apply()
             token.value = null
         }

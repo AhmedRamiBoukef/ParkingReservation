@@ -39,7 +39,13 @@ import com.example.parkingreservation.viewmodel.TokenModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 import java.util.UUID
 
@@ -95,6 +101,16 @@ fun LandingPage(navController: NavHostController, loginModel: LoginModel, tokenM
                 loginModel.loginWithGoogle(email, "$familyName $givenName", googleIdToken) { token ->
                     if (token != null) {
                         tokenModel.saveToken(token)
+                        if (tokenModel.getFCMToken() == null){
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val token = Firebase.messaging.token.await()
+                                Log.d("djamel token", "fcm Token : ${token}")
+                                loginModel.sendFCMToken(token)
+                                withContext(Dispatchers.Main) {
+                                    tokenModel.saveFCMToken(token)
+                                }
+                            }
+                        }
                         navController.navigate(Destination.Home.route) {
                             popUpTo(Destination.Landing.route) { inclusive = true }
                         }
