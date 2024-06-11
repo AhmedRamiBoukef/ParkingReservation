@@ -46,6 +46,7 @@ import com.example.parkingreservation.viewmodel.GetReservationsModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 
 @Composable
@@ -187,8 +188,13 @@ fun ReservationDetails(
                     fontSize = 16.sp,
                     color = Color.Black
                 )
+                val pricePerHour = getReservationsModel.reservation.value?.parking?.pricePerHour?.toBigDecimal() ?: BigDecimal.ZERO
+                val nbrHours = getReservationsModel.reservation.value?.nbrHours?.toBigDecimal() ?: BigDecimal.ZERO
+                val totalPrice = pricePerHour * nbrHours
                 Text(
-                    text = "TEXT",
+
+
+                text = "$totalPrice$",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black

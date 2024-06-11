@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.ReservationElement
+import com.example.parkingreservation.database.AppDatabase
 import com.example.parkingreservation.viewmodel.GetReservationsModel
 
 
@@ -98,16 +99,18 @@ fun MyHistory(
     token: String?
 ) // we have active , finished  , expired , canceled
 {
+    var db = AppDatabase.getDatabase(applicationContext)
+
     var activeStatus by remember { mutableStateOf("Active") }
     val statuses = listOf("Active", "Expired", "Finished", "Cancelled")
 
     LaunchedEffect(activeStatus) {
         try {
                 when (activeStatus) {
-                    "Active" -> getReservationsModel.getReservations("active")
-                    "Expired" -> getReservationsModel.getReservations("expire")
-                    "Finished" -> getReservationsModel.getReservations("finish")
-                    "Cancelled" -> getReservationsModel.getReservations("cancel")
+                    "Active" -> getReservationsModel.getReservations("active",db)
+                    "Expired" -> getReservationsModel.getReservations("expire",db)
+                    "Finished" -> getReservationsModel.getReservations("finish",db)
+                    "Cancelled" -> getReservationsModel.getReservations("cancel",db)
                 }
             if (getReservationsModel.successActive.value) {
                 Log.d("Active Reservations", "MesReservationActive: ${getReservationsModel.activereservation.value}")

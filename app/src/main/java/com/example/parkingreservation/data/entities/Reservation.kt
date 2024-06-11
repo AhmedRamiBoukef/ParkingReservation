@@ -8,7 +8,37 @@ data class ReservationRequest(
 
 data class ReservationResponse(
     val id: Int,
-    val error : String
+    val reservationRandomId: String,
+    val dateAndTimeReservation: String,
+    val nbrHours: Int,
+    val totalPrice: Float,
+    val userId: Int,
+    val parkingId: Int,
+    val dateAndTimeDebut: String,
+    val position: String,
+    val qRcode: String,
+    val status: String,
+    val parking: ParkingResponse
+)
+
+data class ParkingResponse(
+    val id: Int,
+    val photo: String,
+    val nom: String,
+    val addressId: Int,
+    val description: String,
+    val nbrTotalPlaces: Int,
+    val pricePerHour: Float,
+    val address: AddressResponse
+)
+
+data class AddressResponse(
+    val id: Int,
+    val longitude: Float,
+    val latitude: Float,
+    val wilaya: String,
+    val commune: String,
+    val street: String
 )
 
 

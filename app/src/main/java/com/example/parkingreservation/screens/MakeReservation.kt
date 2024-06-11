@@ -4,6 +4,7 @@ import android.content.Context
 import java.time.format.DateTimeFormatter
 import com.example.parkingreservation.Components.TimePickerDialog
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -53,6 +54,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.Components.DateUtils
 import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
+import com.example.parkingreservation.data.entities.ReservationLocal
+import com.example.parkingreservation.database.AppDatabase
 import com.example.parkingreservation.viewmodel.ReservationModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,8 +72,7 @@ fun MakeReservation(navController: NavHostController ,reservationModel: Reservat
     val hourPrice = 13.99
     var showDialog by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
-
-
+    var db = AppDatabase.getDatabase(applicationContext)
     // Fetch parking information when the composable is initialized
     LaunchedEffect(Unit) {
         try {
@@ -342,7 +344,7 @@ fun MakeReservation(navController: NavHostController ,reservationModel: Reservat
                     color = Color.Black
                 )
                 Text(
-                    text = "${nbrHours.value * hourPrice} $",
+                    text = "${nbrHours.value * reservationModel.parkingInfo.value?.parking?.pricePerHour!!}   $",
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFF43939)
@@ -390,8 +392,11 @@ fun MakeReservation(navController: NavHostController ,reservationModel: Reservat
                                                         "%02d",
                                                         timeState.hour
                                                     )
-                                                }:${String.format("%02d", timeState.minute)}"
-                                            )
+                                                }:${String.format("%02d", timeState.minute)}",
+                                                db = db,
+
+                                                )
+
 
                                             if (reservationModel.successReserve.value) {
                                                 Toast.makeText(
@@ -461,13 +466,13 @@ fun MakeReservation(navController: NavHostController ,reservationModel: Reservat
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
-                                    text = "Name Park",
+                                    text = "${reservationModel.parkingInfo.value?.parking?.nom}",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
                                 )
                                 Text(
-                                    text = "53 Strret ouedsmar alger",
+                                    text = "${reservationModel.parkingInfo.value?.parking?.address?.commune}, ${reservationModel.parkingInfo.value?.parking?.address?.wilaya}",
                                     color = Color(0x4B2D2D2D), // Hexadecimal color value (e.g., #3366FF)
                                 )
                                 Row(
@@ -504,7 +509,7 @@ fun MakeReservation(navController: NavHostController ,reservationModel: Reservat
                                         color = Color.Black
                                     )
                                     Text(
-                                        text = "${nbrHours.value * hourPrice} $",
+                                        text = "${nbrHours.value * reservationModel.parkingInfo.value?.parking?.pricePerHour!!} $",
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color(0xFFF43939)
