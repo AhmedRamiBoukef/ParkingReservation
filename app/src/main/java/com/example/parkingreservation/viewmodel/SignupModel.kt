@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SignupModel (private val signupRepository: SignupRepository): ViewModel() {
-    var loading = mutableStateOf(true)
+    var loading = mutableStateOf(false)
     var error = mutableStateOf(false)
     var success = mutableStateOf(false)
 
@@ -24,6 +24,7 @@ class SignupModel (private val signupRepository: SignupRepository): ViewModel() 
         onTokenReceived: (String?) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
+            loading.value = true
             val response = signupRepository.signup(fullname, email, password, address, phonenumber)
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful && response.body() != null) {

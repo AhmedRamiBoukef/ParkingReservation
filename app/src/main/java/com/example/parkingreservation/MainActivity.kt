@@ -70,13 +70,9 @@ class MainActivity : ComponentActivity() {
                 val currentDestination = currentBackStackEntry?.destination
 
                 val showBottomBar = currentDestination?.route in listOf(
-                    Destination.Home.route,
-                    Destination.Map.route,
-                    Destination.ParkingDetails.route,
-                    Destination.Reservation.route,
-                    Destination.ReservationDetails.route,
-                    Destination.ReservationHistory.route,
-                    Destination.Profile.route
+                    Destination.Landing.route,
+                    Destination.Login.route,
+                    Destination.Signup.route
                 )
                 // State to store current location
                 val currentLocation = remember { mutableStateOf<Pair<Double, Double>?>(null) }
@@ -90,7 +86,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
-                        if (showBottomBar) {
+                        if (!showBottomBar) {
                             BottomNavBar(navController = navController)
                         }
                     }
