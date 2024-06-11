@@ -92,16 +92,22 @@ fun GetMain(
         }
         composable(Destination.Home.route) { Home(navController = navController,currentLocation,tokenModel)}
         composable(
-            "${Destination.ParkingDetails.route}/{parkingId}",
+            "${Destination.ParkingDetails.route}/{parkingId}?travelTime={travelTime}",
             arguments = listOf(navArgument("parkingId") { type = NavType.IntType })
         ) { backStackEntry ->
             val parkingId = backStackEntry.arguments?.getInt("parkingId")
+            val travelTime = backStackEntry.arguments?.getString("travelTime")
             parkingId?.let {
-                ParkingDetailsScreen(
-                    parkingId,
-                    navController,
-                    tokenModel
-                )
+
+                travelTime?.let {
+                    ParkingDetailsScreen(
+                        parkingId,
+                        navController,
+                        currentLocation,
+                        travelTime,
+                        tokenModel
+                    )
+                }
             }
         }
 

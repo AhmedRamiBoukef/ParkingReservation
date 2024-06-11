@@ -46,6 +46,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
+import com.example.parkingreservation.repository.DirectionRepository
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 import com.example.parkingreservation.viewmodel.TokenModel
@@ -77,8 +78,10 @@ fun ParkingMap(
         }
     }
     val token: String = tokenModel.getToken()!!;
+
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
+    val directionRepository = DirectionRepository("AIzaSyCP70r3ldU2IuWWC0UlrUuCqoqba_QaXA0")
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository, directionRepository))
     val parkings by homeViewModel.parkings
     val parkingSpots = parkings.map { parking ->
         ParkingSpot(
