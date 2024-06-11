@@ -1,11 +1,13 @@
 package com.example.parkingreservation.dao
 
+import AuthInterceptor
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.LoginRequest
 import com.example.parkingreservation.data.entities.LoginResponse
 import com.example.parkingreservation.data.entities.ParkingInfoResponse
 import com.example.parkingreservation.data.entities.ReservationRequest
 import com.example.parkingreservation.data.entities.ReservationResponse
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,7 +20,6 @@ import retrofit2.http.Path
 
 interface CreateReservation {
 
-    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0", "Content-Type: application/json")
     @POST("api/reservation/")
     suspend fun createReservation(
         @Body requestBody: ReservationRequest
@@ -30,7 +31,6 @@ interface CreateReservation {
 
 
     @Headers(
-        "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0",
         "Content-Type: application/json"
     )
     @GET("api/parkings/{id}")
@@ -39,10 +39,15 @@ interface CreateReservation {
     companion object {
         private var createReservationInstance: CreateReservation? = null
 
-        fun getInstance(): CreateReservation {
+        fun getInstance(token: String): CreateReservation {
             if (createReservationInstance == null) {
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(AuthInterceptor(token))
+                    .build()
+
                 createReservationInstance = Retrofit.Builder()
                     .baseUrl(URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(CreateReservation::class.java)

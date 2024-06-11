@@ -40,10 +40,11 @@ import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
+import com.example.parkingreservation.viewmodel.TokenModel
 
 @Composable
-fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
+fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController, tokenModel: TokenModel){
+    val token: String = tokenModel.getToken()!!;
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
     LaunchedEffect(key1 = Unit) {
@@ -61,7 +62,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
             .fillMaxSize()
             .background(color = Color(0XFFF4F4FA))
             .padding(horizontal = 20.dp)
-            .padding(vertical = 40.dp)
+            .padding(bottom = 40.dp)
     ) {
 
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -222,6 +223,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController){
                     Text(text = "Book Now" )
 
                 }
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
