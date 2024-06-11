@@ -43,7 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
+import com.example.parkingreservation.URL
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 import com.example.parkingreservation.viewmodel.TokenModel
@@ -84,7 +86,8 @@ fun ParkingMap(
             parking.address.longitude,
             parking.address.latitude,
             "${parking.pricePerHour}",
-            "${parking.address.wilaya} ${parking.address.commune}"
+            "${parking.address.wilaya} ${parking.address.commune}",
+            parking.photo
         )
     }
 
@@ -169,11 +172,10 @@ fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit, navController: Nav
         }
         Spacer(modifier = Modifier.height(8.dp))
         Image(
-            painter = painterResource(id = R.drawable.parking_img),
-            contentDescription = "Parking Spot",
+            painter = rememberAsyncImagePainter(model = URL + spot.photo),
+            contentDescription = null,
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
         Button(
             colors = ButtonDefaults.buttonColors(Color(0xFF130F26)),
@@ -194,7 +196,7 @@ fun ParkingSpotDetail(spot: ParkingSpot, onClose: () -> Unit, navController: Nav
     }
 }
 
-data class ParkingSpot(val id: Int,val lat: Double, val lng: Double, val price: String, val address: String)
+data class ParkingSpot(val id: Int,val lat: Double, val lng: Double, val price: String, val address: String,val photo: String)
 
 @Composable
 fun MapMarker(
