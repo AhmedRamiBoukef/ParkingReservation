@@ -39,14 +39,16 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
+import com.example.parkingreservation.repository.DirectionRepository
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 
 @Composable
-fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController,currentLocation: Pair<Double, Double>?){
+fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController,currentLocation: Pair<Double, Double>?, travelTime : String){
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
+    val directionRepository = DirectionRepository("AIzaSyCP70r3ldU2IuWWC0UlrUuCqoqba_QaXA0")
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository,directionRepository))
     LaunchedEffect(key1 = Unit) {
         homeViewModel.fetchParkingById(parkingId!!, currentLocation!!.first, currentLocation.second)
         Log.d("djlocation", "current location : longitiude: ${currentLocation.first}, latitude: ${currentLocation.second}")
@@ -189,7 +191,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController,curre
                             tint = Color(0XFFF43939)
                         )
                         Text(
-                            text = "7 min",
+                            text = travelTime,
                             color = Color(0xFFF43939).copy(alpha = 0.8f),
                             modifier = Modifier
                                 .background(

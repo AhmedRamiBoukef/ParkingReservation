@@ -34,6 +34,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.Parking
+import com.example.parkingreservation.repository.DirectionRepository
 import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,8 @@ import kotlin.math.log
 fun Home(navController: NavHostController, currentLocation: Pair<Double, Double>?) {
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0"
     val homeRepository = HomeRepository(com.example.parkingreservation.dao.Home.createHome(token))
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository))
+    val directionRepository = DirectionRepository("AIzaSyCP70r3ldU2IuWWC0UlrUuCqoqba_QaXA0")
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(homeRepository, directionRepository))
     val parkings by homeViewModel.parkings
 
     var searchText by remember { mutableStateOf("") }
@@ -163,6 +165,8 @@ fun ParkingSpacesSection(
     val tabs = listOf("Nearest", "Popular", "Wanted")
     val isLoading by homeViewModel.loading
     val isError by homeViewModel.error
+    val travelTimes by homeViewModel.travelTimes
+
 
     val filteredParkings = searchResultCoordinates?.let { coords ->
         parkings.filter { parking ->
@@ -262,7 +266,8 @@ fun ParkingSpacesSection(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(filteredParkings) { parking ->
-                        ParkingItem(parking, navController)
+                        ParkingItem(parking, navController, travelTime = travelTimes[parking.id] ?: "N/A"
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
@@ -271,44 +276,52 @@ fun ParkingSpacesSection(
     }
 }
 @Composable
-fun ParkingItem(parking: Parking, navController: NavHostController) {
+fun ParkingItem(parking: Parking, navController: NavHostController, travelTime: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
             .padding(16.dp)
             .clickable {
-                navController.navigate("${Destination.ParkingDetails.route}/${parking.id}")
+                navController.navigate("${Destination.ParkingDetails.route}/${parking.id}?travelTime=${travelTime}")
             }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = rememberAsyncImagePainter(model = URL+parking.photo),
+                painter = rememberAsyncImagePainter(model = URL + parking.photo),
                 contentDescription = "Parking Icon",
                 modifier = Modifier.size(90.dp),
                 contentScale = ContentScale.FillBounds
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.fillMaxSize()) {
-                Row {
-                    Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = parking.nom,
                         color = Color(0xFF2D2D2D),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 20.dp)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "7 min",
-                        color = Color(0xFFF43939).copy(alpha = 0.8f),
+                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Box(
                         modifier = Modifier
+                            .width(100.dp)  // Fixed width for the travel time box
                             .background(
                                 color = Color(0xFFFFF3F3),
                                 shape = RoundedCornerShape(20.dp)
                             )
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                            .padding(horizontal = 2.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = travelTime,
+                            color = Color(0xFFF43939).copy(alpha = 0.8f),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
                 Text(
                     text = "${parking.address.commune}, ${parking.address.wilaya}",
@@ -332,6 +345,7 @@ fun ParkingItem(parking: Parking, navController: NavHostController) {
         }
     }
 }
+
 
 suspend fun searchLocation(context: Context, query: String): Pair<Double, Double>? {
     return withContext(Dispatchers.IO) {
