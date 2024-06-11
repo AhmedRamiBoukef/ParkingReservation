@@ -15,7 +15,6 @@ import com.example.parkingreservation.screens.Home
 import com.example.parkingreservation.screens.LandingPage
 import com.example.parkingreservation.screens.Login
 import com.example.parkingreservation.screens.MakeReservation
-import com.example.parkingreservation.screens.MesReservationActive
 import com.example.parkingreservation.screens.MyHistory
 import com.example.parkingreservation.screens.ParkingDetailsScreen
 import com.example.parkingreservation.screens.ReservationDetails
@@ -72,13 +71,7 @@ fun GetMain(
                 )
             }
         }
-        composable(Destination.MyActiveReservation.route) {
-            MesReservationActive(
-                navController,
-                getReservationsModel,
-                applicationContext
-            )
-        }
+
         composable(Destination.ReservationHistory.route) {
             MyHistory(
                 navController,

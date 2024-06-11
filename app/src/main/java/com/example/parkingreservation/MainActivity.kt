@@ -31,7 +31,6 @@ import com.example.parkingreservation.viewmodel.SignupModel
 import com.example.parkingreservation.viewmodel.TokenModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -50,10 +49,10 @@ class MainActivity : ComponentActivity() {
     private val getReservationsModel : GetReservationsModel by viewModels {
         GetReservationsModel.Factory((application as MyApplication).getReservationsRespository)
     }
-
     private val cancelReservationModel : CancelReservationModel by viewModels {
         CancelReservationModel.Factory((application as MyApplication).cancelReservationRespository)
     }
+
 
 
 
