@@ -21,17 +21,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.ReservationElement
+import com.example.parkingreservation.dao.GetReservations
+import com.example.parkingreservation.repository.GetReservationsRespository
 import com.example.parkingreservation.viewmodel.GetReservationsModel
+import com.example.parkingreservation.viewmodel.TokenModel
 
 @Composable
 fun MesReservationActive(
     navController: NavHostController,
-    getReservationsModel: GetReservationsModel,
-    applicationContext: Context
+    applicationContext: Context,
+    tokenModel: TokenModel
 ) // we have active , finished  , expired , canceled
 {
+    val token: String = tokenModel.getToken()!!;
+    val getReservationsRespository = GetReservationsRespository(GetReservations.getInstance(token))
+    val getReservationsModel: GetReservationsModel = viewModel(factory = GetReservationsModel.Factory(getReservationsRespository))
 
     LaunchedEffect(Unit) {
         try {

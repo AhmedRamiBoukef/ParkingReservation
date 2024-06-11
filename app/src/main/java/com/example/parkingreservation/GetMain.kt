@@ -37,9 +37,6 @@ fun GetMain(
     tokenModel: TokenModel,
     signupModel: SignupModel,
     loginModel: LoginModel,
-    reservationModel: ReservationModel,
-    getReservationsModel: GetReservationsModel,
-    cancelReservationModel: CancelReservationModel,
     applicationContext: Context,
     currentLocation: Pair<Double, Double>?
 ) {
@@ -66,23 +63,22 @@ fun GetMain(
             parkingId?.let {
                 MakeReservation(
                     navController,
-                    reservationModel,
                     applicationContext,
-                    parkingId
+                    parkingId,
+                    tokenModel
                 )
             }
         }
         composable(Destination.MyActiveReservation.route) {
             MesReservationActive(
                 navController,
-                getReservationsModel,
-                applicationContext
+                applicationContext,
+                tokenModel
             )
         }
         composable(Destination.ReservationHistory.route) {
             MyHistory(
                 navController,
-                getReservationsModel,
                 applicationContext,
                 tokenModel
             )
@@ -95,10 +91,9 @@ fun GetMain(
             reservationId?.let {
                 ReservationDetails(
                     navController,
-                    getReservationsModel,
                     applicationContext,
-                    cancelReservationModel,
-                    reservationId
+                    reservationId,
+                    tokenModel
                 )
             }
         }

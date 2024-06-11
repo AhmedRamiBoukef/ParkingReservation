@@ -20,17 +20,8 @@ class MyApplication: Application() {
     val signup by lazy { Signup.createSignup() }
     val signupRepository by lazy { SignupRepository(signup) }
 
-    val reservation by lazy {CreateReservation.getInstance()}
-    val reservationRepository by lazy {  ReservationRepository(reservation)}
-
     val login by lazy { Login.createLogin() }
     val loginRepository by lazy { LoginRepository(login) }
-
-    val getReservationInstance by lazy { GetReservations.getInstance() }
-    val getReservationsRespository by lazy { GetReservationsRespository(getReservationInstance) }
-
-    val cancelReservationInstance by lazy { CancelReservation.getInstance() }
-    val cancelReservationRespository by lazy { CancelReservationRespository(cancelReservationInstance) }
 
 
 }

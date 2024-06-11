@@ -44,16 +44,6 @@ class MainActivity : ComponentActivity() {
     private val loginModel: LoginModel by viewModels {
         LoginModel.Factory((application as MyApplication).loginRepository)
     }
-    private val reservationModel:ReservationModel by viewModels {
-        ReservationModel.Factory((application as MyApplication).reservationRepository)
-    }
-    private val getReservationsModel : GetReservationsModel by viewModels {
-        GetReservationsModel.Factory((application as MyApplication).getReservationsRespository)
-    }
-
-    private val cancelReservationModel : CancelReservationModel by viewModels {
-        CancelReservationModel.Factory((application as MyApplication).cancelReservationRespository)
-    }
 
 
 
@@ -96,7 +86,7 @@ class MainActivity : ComponentActivity() {
                     val tokenModel: TokenModel by viewModels {
                         TokenModel.Factory(sharedPreferences)
                     }
-                    GetMain(navController,tokenModel,signupModel,loginModel,reservationModel,getReservationsModel,cancelReservationModel,applicationContext,currentLocation.value)
+                    GetMain(navController,tokenModel,signupModel,loginModel,applicationContext,currentLocation.value)
 
 
                 }

@@ -1,7 +1,9 @@
 package com.example.parkingreservation.dao
 
+import AuthInterceptor
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.GetReservationResponse
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,7 +13,6 @@ import retrofit2.http.Path
 
 interface GetReservations {
     @Headers(
-        "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0",
         "Content-Type: application/json"
     )
     @GET("api/reservation/{id}")
@@ -20,7 +21,6 @@ interface GetReservations {
 
 
     @Headers(
-        "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsImVtYWlsIjoidGVzdEBlc2kuZHoiLCJpYXQiOjE3MTY1MTA2MTcsImV4cCI6MTcxOTEwMjYxN30.0YIx0iaClj2cJzYzLm9GlMUDpSuFJNgY0XVYZw8eqr0",
         "Content-Type: application/json"
     )
     @GET("api/reservation/{status}")
@@ -29,10 +29,15 @@ interface GetReservations {
     companion object {
         private var getReservationsInstance: GetReservations? = null
 
-        fun getInstance(): GetReservations {
+        fun getInstance(token: String): GetReservations {
             if (getReservationsInstance == null) {
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(AuthInterceptor(token))
+                    .build()
+
                 getReservationsInstance = Retrofit.Builder()
                     .baseUrl(URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(GetReservations::class.java)

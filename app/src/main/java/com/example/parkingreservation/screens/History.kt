@@ -35,9 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.parkingreservation.Components.ReservationElement
+import com.example.parkingreservation.repository.GetReservationsRespository
+import com.example.parkingreservation.repository.HomeRepository
 import com.example.parkingreservation.viewmodel.GetReservationsModel
+import com.example.parkingreservation.viewmodel.HomeViewModel
 import com.example.parkingreservation.viewmodel.TokenModel
 
 
@@ -94,15 +98,15 @@ fun InactiveStatus(status: String, onClick: () -> Unit) {
 @Composable
 fun MyHistory(
     navController: NavHostController,
-    getReservationsModel: GetReservationsModel,
     applicationContext: Context,
     tokenModel: TokenModel
 ) // we have active , finished  , expired , canceled
 {
     var activeStatus by remember { mutableStateOf("Active") }
     val statuses = listOf("Active", "Expired", "Finished", "Cancelled")
-    val token = tokenModel.getToken()
-
+    val token: String = tokenModel.getToken()!!;
+    val getReservationsRespository = GetReservationsRespository(com.example.parkingreservation.dao.GetReservations.getInstance(token))
+    val getReservationsModel: GetReservationsModel = viewModel(factory = GetReservationsModel.Factory(getReservationsRespository))
     LaunchedEffect(activeStatus) {
         try {
                 when (activeStatus) {

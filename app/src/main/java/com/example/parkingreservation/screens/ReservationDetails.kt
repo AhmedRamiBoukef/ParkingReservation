@@ -38,11 +38,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.URL
+import com.example.parkingreservation.dao.GetReservations
+import com.example.parkingreservation.repository.CancelReservationRespository
+import com.example.parkingreservation.repository.GetReservationsRespository
 import com.example.parkingreservation.viewmodel.CancelReservationModel
 import com.example.parkingreservation.viewmodel.GetReservationsModel
+import com.example.parkingreservation.viewmodel.TokenModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,12 +86,16 @@ fun InfoElement(key : String , value :String)
 @Composable
 fun ReservationDetails(
     navController: NavHostController,
-    getReservationsModel: GetReservationsModel,
     applicationContext: Context,
-    cancelReservationModel: CancelReservationModel,
-    reservationId: Int
+    reservationId: Int,
+    tokenModel: TokenModel
 )
 {
+    val token: String = tokenModel.getToken()!!;
+    val getReservationsRespository = GetReservationsRespository(GetReservations.getInstance(token))
+    val getReservationsModel: GetReservationsModel = viewModel(factory = GetReservationsModel.Factory(getReservationsRespository))
+    val cancelReservationRespository = CancelReservationRespository(com.example.parkingreservation.dao.CancelReservation.getInstance(token))
+    val cancelReservationModel: CancelReservationModel = viewModel(factory = CancelReservationModel.Factory(cancelReservationRespository))
 
     LaunchedEffect(Unit) {
         try {
@@ -224,7 +233,7 @@ fun ReservationDetails(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF0000)),
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
-                            .padding(top = 25.dp)
+                            .padding(top = 15.dp)
                             .fillMaxWidth(0.9f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
