@@ -62,7 +62,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController, toke
             .fillMaxSize()
             .background(color = Color(0XFFF4F4FA))
             .padding(horizontal = 20.dp)
-            .padding(vertical = 40.dp)
+            .padding(bottom = 40.dp)
     ) {
 
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -223,6 +223,7 @@ fun ParkingDetailsScreen(parkingId: Int?, navController: NavHostController, toke
                     Text(text = "Book Now" )
 
                 }
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
