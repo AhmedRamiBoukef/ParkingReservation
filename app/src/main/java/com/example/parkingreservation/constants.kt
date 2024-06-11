@@ -1,4 +1,5 @@
 package com.example.parkingreservation
 
-val URL="https://e92c-154-121-25-22.ngrok-free.app/"
+val URL="https://238d-41-111-189-173.ngrok-free.app/"
+
 
