@@ -12,12 +12,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginModel(private val loginRepository: LoginRepository): ViewModel() {
-    var loading = mutableStateOf(true)
+    var loading = mutableStateOf(false)
     var error = mutableStateOf(false)
     var success = mutableStateOf(false)
 
     fun login(email: String, password: String, onTokenReceived: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
+            loading.value = true
             val response = loginRepository.login(email, password)
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful && response.body() != null) {

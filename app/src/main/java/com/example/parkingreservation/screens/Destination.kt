@@ -3,6 +3,7 @@ package com.example.parkingreservation.screens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,7 +25,7 @@ sealed class Destination(val route:String, val icon: ImageVector = Icons.Default
 
     object ReservationHistory:Destination("ReservationHistory" ,Icons.Default.DateRange,"My Reservations")
     object ParkingDetails:Destination("ParkingDetails")
-    object Map:Destination("Map")
+    object Map:Destination("Map",Icons.Default.LocationOn, "Map")
 
     object Notification:Destination("Notification")
 

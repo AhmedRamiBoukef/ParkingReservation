@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkingreservation.Components.DateUtils
@@ -56,7 +57,14 @@ import com.example.parkingreservation.R
 import com.example.parkingreservation.URL
 import com.example.parkingreservation.data.entities.ReservationLocal
 import com.example.parkingreservation.database.AppDatabase
+import com.example.parkingreservation.dao.CreateReservation
+import com.example.parkingreservation.dao.GetReservations
+import com.example.parkingreservation.repository.GetReservationsRespository
+import com.example.parkingreservation.repository.ReservationRepository
+import com.example.parkingreservation.viewmodel.GetReservationsModel
+
 import com.example.parkingreservation.viewmodel.ReservationModel
+import com.example.parkingreservation.viewmodel.TokenModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +72,15 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MakeReservation(navController: NavHostController ,reservationModel: ReservationModel ,applicationContext: Context,    parkingId: Int ) {
+fun MakeReservation(
+    navController: NavHostController,
+    applicationContext: Context,
+    parkingId: Int,
+    tokenModel: TokenModel
+) {
+    val token: String = tokenModel.getToken()!!;
+    val reservationsRespository = ReservationRepository(CreateReservation.getInstance(token))
+    val reservationModel: ReservationModel = viewModel(factory = ReservationModel.Factory(reservationsRespository))
     val isDatePickerVisible = remember { mutableStateOf(false) }
     val isTimePickerVisible = remember { mutableStateOf(false) }
     val timeState = rememberTimePickerState(0,0,is24Hour = false)

@@ -11,7 +11,6 @@ import com.example.parkingreservation.database.AppDatabase
 import com.example.parkingreservation.repository.GetReservationsRespository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 class GetReservationsModel (private val getReservationRepository: GetReservationsRespository) : ViewModel() {
 
@@ -24,6 +23,7 @@ class GetReservationsModel (private val getReservationRepository: GetReservation
     var success= mutableStateOf(false)
     var reservation = mutableStateOf<GetReservationResponse?>(null)
     suspend fun getReservations(status : String,db:AppDatabase): List<GetReservationResponse?>? {
+
         loadingActive.value = true
 
         return try {

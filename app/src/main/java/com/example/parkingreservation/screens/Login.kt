@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -124,6 +126,14 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
 
 
                 )
+                if (loginModel.loading.value) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .padding(vertical = 16.dp)
+                    )
+                }
             }
             Column (modifier = Modifier.padding(bottom = 40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(
@@ -166,8 +176,8 @@ fun Login(navController: NavHostController, loginModel: LoginModel, tokenModel: 
                 Spacer(modifier = Modifier.height(10.dp))
                 Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                     Text(text = "Don't have an account?", fontSize = 12.sp, color = Color(0xFF2D2D2D))
-                    Text(text = "  Login", fontSize = 12.sp, color = Color(0xFFF43939), modifier = Modifier.clickable {
-                        navController.navigate(Destination.Login.route)
+                    Text(text = "  Signup", fontSize = 12.sp, color = Color(0xFFF43939), modifier = Modifier.clickable {
+                        navController.navigate(Destination.Signup.route)
                     })
                 }
             }
